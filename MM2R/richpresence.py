@@ -15,7 +15,8 @@ rp.add_lookup("Map", {
 	range(0x115, 0x120): "Grappler Tower",
 	range(0x147, 0x161): "Bias City",
 	range(0x182, 0x187): "Eternal Gate",
-	range(0x188, 0x18d): "Trader Camp"
+	range(0x188, 0x18d): "Trader Camp",
+	0x1a2: "Abandoned Camp"
 })
 
 rp.add_lookup("Job", {
