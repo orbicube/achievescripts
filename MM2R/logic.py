@@ -148,11 +148,11 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 		4, None, bit1(0x0019e925), maps["Bazaarska Vehicle Shop"], None)
 ]
 for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
-	ach = Achievement(id=ach_id, title=title, description=desc, points=points, type=type)
+	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=type)
 	ach.add_core([
 		(mem.current_map == map_id),
-		(delta(addr) == 0),
-		(addr == 1)
+		(delta(addr) == value(0)),
+		(addr == value(1))
 	])
 
 	ach_set.add_achievement(ach)
@@ -175,7 +175,7 @@ ach_hunts = [ # ID, Badge, Title, Description Override, Points, Hunts Required
 for ach_id, badge, title, desc, points, hunts_req in ach_hunts:
 	if not desc:
 		desc = f"Clear {hunts_req} Challenge Hunts"
-	ach = Achievement(id=ach_id, title=title, description=desc, points=points, type=None)
+	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 
 	# Only two maps where you can hand in Challenge Hunts
 	logic = [(mem.current_map == maps["Hatoba Hunt Office"]) | (mem.current_map == maps["Villain Museum"])]
@@ -204,19 +204,88 @@ ach_loots = [ # ID, Badge, Title, Description, Points, Addresses, Maps
 	(0, 0, "Loot Mado", "Mado", 5, (0x00, 0, 0x00, 0), [0x00])
 ]
 
-# Challenges
+
+# Levels
+ach_levels = [ # ID, Badge, Title, Points, Class, Index, Threshold
+	(0, 0, "!!Level 20", 3, "Any", -1, 20),
+	(0, 0, "!!Level 40", 5, "Any", -1, 40),
+	(0, 0, "!!Level 60 Hunter", 10, "Hunter", 0, 60),
+	(0, 0, "!!Level 60 Mechanic", 10, "Mechanic", 1, 60),
+	(0, 0, "!!Level 60 Soldier", 10, "Soldier", 2, 60),
+	(0, 0, "!!Level 60 Nurse", 10, "Nurse", 3, 60),
+	(0, 0, "!!Level 60 Wrestler", 10, "Wrestler", 4, 60),
+	(0, 0, "!!Level 60 Artist", 10, "Artist", 5, 60),
+	(0, 0, "!!Level 60 Dog", 10, "Dog", 6, 60),
+	(0, 0, "!!Level 60 Money Eater", 10, "Money Eater", 7, 60)
+]
+
+def party_stat(party_index: int, offset: int):
+	return mem.party[party_index] * mem.offsets["Character"] >> byte(mem.char_base + offset)
+
+for ach_id, badge, title, points, char_class, class_index, threshold in ach_levels:
+	ach = Achievement(id=ach_id, badge=badge, description="", title=title, points=points, type=None)
+	ach.add_core((mem.chars["Player"]["Level"] > 1))
+
+	logic = []
+	for i in range(0, 4): # All achievements care about primary classes
+		temp_logic = [
+			(delta(party_stat(i, mem.offsets["Level"])) == threshold - 1),
+			(party_stat(i, mem.offsets["Level"]) == threshold)
+		]
+		if class_index > -1:
+			temp_logic.append((party_stat(i, mem.offsets["Class"]) == value(class_index)))
+		logic.append(temp_logic)
+
+	if char_class == "Any":
+		class_desc = ""
+	elif char_class == "Dog":
+		class_desc = " with Pochi, Licky or Hachi"
+	elif char_class == "Money Eater":
+		class_desc = " with a Money Eater"
+
+	else: # Regular classes should account for subclassing
+		class_desc = f" with {char_class} as a party member's primary or secondary class"
+
+		for i in range(0, 4):
+			logic.append([ # Subclasses are index from 1, with 0 being no subclass
+				(delta(party_stat(i, mem.offsets["Subclass"] + class_index + 1)) == threshold - 1),
+				(party_stat(i, mem.offsets["Subclass"] + class_index + 1) == threshold),
+				(party_stat(i, mem.offsets["Subclass"]) == value(class_index + 1))
+			])
+
+	for l in logic:
+		ach.add_alt(l)
+
+	ach.description = f"Reach level {threshold}{class_desc}"
+	ach_set.add_achievement(ach)
+
+
+
+# Dog / Money Eater Edge Cases
+
+
+# Progression / Challenges
+
+# Grapplers on the bridge
+# Progression encounter in map without any other encounters, so we can just check if all enemies have died in an encounter
+bridge_logic = [
+	(mem.game_state == 2),
+	(mem.current_map == maps["Bay Bridge"]),
+	(delta(mem.enemies[0]["HP"]) > value(0)) | (delta(mem.enemies[1]["HP"]) > value(0)) | (delta(mem.enemies[2]["HP"]) > value(0)) | (delta(mem.enemies[3]["HP"]) > value(0)),
+	(mem.enemies[0]["HP"] == 0) & (mem.enemies[1]["HP"] == 0) & (mem.enemies[2]["HP"] == 0) & (mem.enemies[3]["HP"] == 0)
+]
+progression_bridge = Achievement(id=0, badge=0, title="!!Clear the Blockade",
+	description="Clear the Grappler blockade on the bridge to Hatoba",
+	points=5, type=AchievementType.PROGRESSION)
+progression_bridge.add_core(bridge_logic)
+ach_set.add_achievement(progression_bridge)
+
 challenge_bridge = Achievement(id=0, badge=0, title="You and What Army?",
 	description="Defeat the Grapplers occupying the bridge with only a single party member",
 	points=5, type=AchievementType.MISSABLE)
-challenge_bridge.add_core([
-	(mem.game_state == 2),
-	(mem.current_map == maps["Bay Bridge"]),
-	(mem.party[1] == 0xff),
-	(mem.party[2] == 0xff),
-	(mem.party[3] == 0xff),
-	(delta(mem.enemies[0]["hp"]) > 0) | (delta(mem.enemies[1]["hp"]) > 0) | (delta(mem.enemies[2]["hp"]) > 0) | (delta(mem.enemies[3]["hp"]) > 0),
-	(mem.enemies[0]["hp"] == 0) & (mem.enemies[1]["hp"] == 0) & (mem.enemies[2]["hp"] == 0) & (mem.enemies[3]["hp"] == 0)
-])
+challenge_bridge.add_core(bridge_logic)
+# Party members get added sequentially so we only need to check if the second slot has no one in it
+challenge_bridge.add_core((mem.party[1] == value(0xff)))
 ach_set.add_achievement(challenge_bridge)
 
 # Misc achievements
@@ -225,10 +294,10 @@ ach_igoggles = Achievement(id=0, badge=0, title="!!Received iGoggles",
 	points=1, type=AchievementType.PROGRESSION)
 ach_igoggles.add_core([
 	(mem.current_map == maps["Mado"]),
-	(delta(mem.inventory["tools"][0][0]) == 0),
-	(mem.inventory["tools"][0][0] == 0x05b),
-	(delta(mem.inventory["tools"][0][1]) == 0),
-	(mem.inventory["tools"][0][1] == 1)])
+	(delta(mem.inventory["Tools"][0][0]) == 0),
+	(mem.inventory["Tools"][0][0] == 0x05b),
+	(delta(mem.inventory["Tools"][0][1]) == 0),
+	(mem.inventory["Tools"][0][1] == 1)])
 ach_set.add_achievement(ach_igoggles)
 
 ach_pocketmoney = Achievement(id=0, badge=0, title="!!Pocket Money",
