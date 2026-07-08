@@ -32,7 +32,7 @@ def note2dict(notefile: str, addr: str):
 		val = int(val, 16)
 
 		if key_str in note_dict:
-			if type(note_dict[key_str]) != List:
+			if not isinstance(note_dict[key_str], list):
 				note_dict[key_str] = [note_dict[key_str], val]
 			else:
 				note_dict[key_str].append(val)
@@ -116,7 +116,23 @@ def bitcount_range(start_addr: int, start_bit: int, end_addr: int, end_bit: int,
 	return "foo"
 
 
-# Quests/Flag-based Achievements
+def add_maps(logic: list, map_ids: list|int):
+	if isinstance(map_ids, list):
+		for m in map_ids:
+			logic.append(or_next(mem.current_map == m))
+
+		logic[-1] = (mem.current_map == m)
+	else:
+		logic.append(mem.current_map == map_ids)
+
+	return logic
+
+## Constants
+IN_COMBAT = (mem.game_state == value(2))
+# Not strictly needed, save data is loaded while on main menu
+SAVE_PROTECTION = (delta(mem.current_map) < maps["Loading Save"])
+
+## Quests/Flag-based Achievements
 ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map ID, Extra Flags
 	(0, 0, "!!Start Mado Rebuild", "Clear away the rubble of Mado's destroyed buildings, paving the way for new structures",
 		1, None, bit0(0x0019e91a), maps["Mado"], None),
@@ -150,6 +166,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=type)
 	ach.add_core([
+		SAVE_PROTECTION,
 		(mem.current_map == map_id),
 		(delta(addr) == value(0)),
 		(addr == value(1))
@@ -157,14 +174,96 @@ for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
 
 	ach_set.add_achievement(ach)
 
-# Enemy Bounties
+## Enemy Bounties
 bounty_types = []
-ach_bounties = [ # ID, Badge, Title, Description, Points, Type, Address
-	(0, 0, "Sand Shark", "Defeat the Sand Shark in the desert east of Mado",
-		3, None, bit3(0x0019e8bb))
+ach_bounties = [ # ID, Badge, Title, Description, Points, Type, Name, Map
+	(0, 0, "!!Sand Shark", "Defeat the Sand Shark in the desert east of Mado",
+		3, None, "Sand Shark", maps["Overworld"]),
+	(0, 0, "!!Desperoid", "Defeat the Desperoid near El Niño",
+		3, None, "Desperoid", maps["Overworld"]),
+	(0, 0, "Adam Ant-ium", "Defeat Adam Ant inside its nest near the Forest Watchtower",
+		5, None, "Adam Ant", maps["Giant Ant Cave B4F"]),
+	(0, 0, "!!Thousand Radiata", "Defeat the Thousand Radiata in the forest west of Hatoba",
+		5, None, "Thousand Radiata", maps["Overworld"]),
+	(0, 0, "Rhino? Gone", "Defeat the Rhinogon in the deserts near Bar Thirsty",
+		4, None, "Rhinogon", maps["Overworld"]),
+	(0, 0, "!!Skunks", "Defeat Skunks atop the Grappler Tower",
+		10, AchievementType.PROGRESSION, "Skunks", maps["Grappler Tower 10F"]),
+	(0, 0, "!!Myth Ladybug", "Defeat the Myth Ladybug near Nobotoke Village",
+		10, None, "Myth Ladybug", maps["Overworld"]),
+	(0, 0, "!!Madam Muscle", "Defeat Madam Muscle in the Protein Palace",
+		10, None, "Madam Muscle", maps["Protein Palace B5F"]),
+	(0, 0, "!!Kamikaze King", "Defeat the Kamikaze King northeast of Islaporto",
+		10, None, "Kamikaze King", maps["Overworld"]),
+	(0, 0, "From Hell's Heart I Shoot at Thee", "Defeat U-Shark, completing Captain Beihab's quest for vengeance and acquiring your own ship",
+		10, AchievementType.PROGRESSION, "U-Shark", maps["Overworld"]),
+	(0, 0, "!!Flying Fish", "Defeat the Flying Fish lurking in the waters near Delta Rio",
+		5, None, "Flying Fish", maps["Overworld"]),
+	(0, 0, "!!Dust Hominid", "Defeat the Dust Hominid inside the Wind Farm",
+		5, None, "Dust Hominid", maps["Wind Farm B1F"]),
+	(0, 0, "!!Total Turtle", "Defeat the Total Turtle in the waters west of Islaporto",
+		5, None, "Total Turtle", maps["Overworld"]),
+	(0, 0, "!!Vile Vendor", "Defeat the Vile Vendor within the Vending Paradise",
+		10, None, "Vile Vendor", maps["Vending Paradise Inside"]),
+	(0, 0, "!!Nadir Ghost", "Defeat the ghost haunting hotel Nadir",
+		10, None, "Nadir Ghost", maps["Nadir 13F"]),
+	(0, 0, "!!Groween", "Defeat Groween in the depths of Freak Island",
+		10, None, "Groween", maps["Groween"]),
+	(0, 0, "!!Cagliostro", "Defeat Cagliostro within the Dark Canal",
+		10, None, "Cagliostro", maps["Dark Canal 2F"]),
+	(0, 0, "!!Sea Mon-Star", "Defeat the Sea Mon-Star in the valley near Moro Poco",
+		5, None, "Sea Mon-Star", maps["Overworld"]),
+	(0, 0, "!!Mimic Stairs", "Defeat the Mimic Stairs in Moro Poco",
+		10, None, "Mimic Stairs", [maps["Moro Poco"], maps["Moro Poco 2F"]]),
+	(0, 0, "!!Bullfrog", "Defeat Bullfrog at Devil island",
+		10, None, "Bullfrog", maps["Devil Island"]),
+	(0, 0, "!!Sandy Dandy", "Sense and defeat Sandy Dandy in the desert east of South Gate",
+		10, None, "Sandy Dandy", maps["Overworld"]),
+	(0, 0, "!!Daedalus", "Defeat the Daedalus in the desert west of South Gate",
+		10, None, "Daedalus", maps["Overworld"]),
+	(0, 0, "!!Hovering Dog", "Defeat the Hovering Dog in Rain Valley",
+		10, None, "Hovering Dog", maps["Rain Valley"]),
+	(0, 0, "!!Battleshipsaurus", "Defeat the Battleshipsaurus in Rain Valley",
+		10, None, "Battleshipsaurus", maps["Rain Valley"]),
+	(0, 0, "!!Ted Broiler", "Defeat Ted Broiler within Bias City, completing your quest for vengeance",
+		25, AchievementType.PROGRESSION, "Ted Broiler", maps["Bias City B3F"]),
+	(0, 0, "!!U-U-Shark", "Defeat the U-U-Shark at the Water Bypass",
+		50, AchievementType.MISSABLE, "U-U-Shark", maps["Water Bypass"]),
+	(0, 0, "EX-Daedalus", "Defeat the EX-Daedalus in the desert west of Deathcruz",
+		50, None, "EX-Daedalus", maps["Overworld"]),
+	(0, 0, "!!Mothershipsaurus", "Defeat the Mothershipsaurus and its gaggle of Battleshipsauri in Rain Valley",
+		50, None, "Mothershipsaurus", maps["Rain Valley"])
 ]
+for ach_id, badge, title, desc, points, ach_type, bounty_name, map_id in ach_bounties:
+	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=ach_type)
 
-# Challenge Hunts
+	logic = add_maps([SAVE_PROTECTION], map_id)
+	logic.append([
+		(delta(mem.bounties[bounty_name]) == value(0)),
+		(mem.bounties[bounty_name] == value(1))
+	])
+
+	ach.add_core(logic)
+	ach_set.add_achievement(ach)
+
+# Pichi Pichi Bounty achievement requires quest completion as well
+ach_pichipichi = Achievement(id=0, badge=0, title="!!Pichi Pichi Finale", points=10, type=None,
+	description="Defeat the Pichi Pichi Brothers once and for all and return the stolen goods to Old Wolf in Hatoba")
+ach_pichipichi.add_core([
+	SAVE_PROTECTION,
+	(mem.bounties["Pichi Pichi Bros"] == value(1)),
+	(bit3(0x0019e955) == value(1))
+])
+ach_pichipichi.add_alt([
+	(mem.current_map == maps["Melt-town Sewers"]),
+	(delta(mem.bounties["Pichi Pichi Bros"]) == value(0))
+])
+ach_pichipichi.add_alt([
+	(mem.current_map == maps["Hatoba Ferry Terminal 3F"]),
+	(delta(bit3(0x0019e955)) == value(0))
+])
+
+## Challenge Hunts
 ach_hunts = [ # ID, Badge, Title, Description Override, Points, Hunts Required
 	(0, 0, "Sprouting Challenger", 'Clear 10 Challenge Hunts, earning the title of "Challenger"', 5, 10),
 	(0, 0, "Budding Challenger", '', 5, 20),
@@ -178,7 +277,9 @@ for ach_id, badge, title, desc, points, hunts_req in ach_hunts:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 
 	# Only two maps where you can hand in Challenge Hunts
-	logic = [(mem.current_map == maps["Hatoba Hunt Office"]) | (mem.current_map == maps["Villain Museum"])]
+	logic = [ SAVE_PROTECTION,
+		(mem.current_map == maps["Hatoba Hunt Office"]) | (mem.current_map == maps["Villain Museum"]
+	)]
 
 	# Delta bitcounts for hunt clear flags
 	# First byte uses bits 0-6
@@ -204,8 +305,36 @@ ach_loots = [ # ID, Badge, Title, Description, Points, Addresses, Maps
 	(0, 0, "Loot Mado", "Mado", 5, (0x00, 0, 0x00, 0), [0x00])
 ]
 
+## Character Recruits
+ach_chars = [ # ID, Badge, Title, Description, Points, Character, Maps
+	(0, 0, "!!Axel Recruit", "Free Axel from captivity in El Niño, recruiting him to your party",
+		5, "Axel", maps["El Nino"]),
+	(0, 0, "!!Pochi Recruit", "Find Pochi in the Dog Village, recruiting them to your party",
+		4, "Pochi", maps["Dog Village"]),
+	(0, 0, "You Only Live Thrice", "Rekindle Miska's undying spirit, recruiting her to your party",
+		5, "Miska", maps["Mado Mince's Lab"]),
+	(0, 0, "!!Money Eater Recruit", "Grow a Money Eater, recruiting it into your party",
+		5, "Money Eater 1", [maps["Mado Garage"], maps["Bennett's House"], maps["Delta Rio Apartments 2F"]]),
+	(0, 0, "!!Licky Recruit", "Encounter and defeat the Demon Dog Licky in the plains of Nobotke, recruiting them to your party",
+		5, "Licky", maps["Overworld"]),
+	(0, 0, "!!Hachi Recruit", "Feed Hachi its favorite treat in Taisha, recruiting them to your party",
+		4, "Hachi", maps["Taisha"])
+]
+for ach_id, badge, title, desc, points, char_name, map_id in ach_chars:
+	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 
-# Levels
+	logic = add_maps([SAVE_PROTECTION], map_id)
+
+	logic.append([
+		(delta(mem.chars[char_name]["Available"]) == value(0)),
+		(mem.chars[char_name]["Available"] == value(1))
+	])
+
+	ach.add_core(logic)
+	ach_set.add_achievement(ach)
+
+
+## Class Levels
 ach_levels = [ # ID, Badge, Title, Points, Class, Index, Threshold
 	(0, 0, "!!Level 20", 3, "Any", -1, 20),
 	(0, 0, "!!Level 40", 5, "Any", -1, 40),
@@ -224,7 +353,10 @@ def party_stat(party_index: int, offset: int):
 
 for ach_id, badge, title, points, char_class, class_index, threshold in ach_levels:
 	ach = Achievement(id=ach_id, badge=badge, description="", title=title, points=points, type=None)
-	ach.add_core((mem.chars["Player"]["Level"] > 1))
+	ach.add_core([
+		SAVE_PROTECTION,
+		(mem.chars["Player"]["Level"] > value(1))
+	])
 
 	logic = []
 	for i in range(0, 4): # All achievements care about primary classes
@@ -232,7 +364,7 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 			(delta(party_stat(i, mem.offsets["Level"])) == threshold - 1),
 			(party_stat(i, mem.offsets["Level"]) == threshold)
 		]
-		if class_index > -1:
+		if class_index > -1: # Don't need to check what the class is for agnostic achievements
 			temp_logic.append((party_stat(i, mem.offsets["Class"]) == value(class_index)))
 		logic.append(temp_logic)
 
@@ -246,11 +378,13 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 	else: # Regular classes should account for subclassing
 		class_desc = f" with {char_class} as a party member's primary or secondary class"
 
+		sub_index = class_index + 1
+		sub_address = mem.offsets["Subclass"] + sub_index
 		for i in range(0, 4):
 			logic.append([ # Subclasses are index from 1, with 0 being no subclass
-				(delta(party_stat(i, mem.offsets["Subclass"] + class_index + 1)) == threshold - 1),
-				(party_stat(i, mem.offsets["Subclass"] + class_index + 1) == threshold),
-				(party_stat(i, mem.offsets["Subclass"]) == value(class_index + 1))
+				(delta(party_stat(i, sub_address)) == threshold - 1),
+				(party_stat(i, sub_address) == threshold),
+				(party_stat(i, mem.offsets["Subclass"]) == value(sub_index))
 			])
 
 	for l in logic:
@@ -260,19 +394,17 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 	ach_set.add_achievement(ach)
 
 
-
-# Dog / Money Eater Edge Cases
-
-
-# Progression / Challenges
+## Progression / Challenges
 
 # Grapplers on the bridge
 # Progression encounter in map without any other encounters, so we can just check if all enemies have died in an encounter
 bridge_logic = [
-	(mem.game_state == 2),
+	(delta(mem.game_state) == value(2)),
+	(mem.game_state == value(2)),
 	(mem.current_map == maps["Bay Bridge"]),
 	(delta(mem.enemies[0]["HP"]) > value(0)) | (delta(mem.enemies[1]["HP"]) > value(0)) | (delta(mem.enemies[2]["HP"]) > value(0)) | (delta(mem.enemies[3]["HP"]) > value(0)),
-	(mem.enemies[0]["HP"] == 0) & (mem.enemies[1]["HP"] == 0) & (mem.enemies[2]["HP"] == 0) & (mem.enemies[3]["HP"] == 0)
+	(mem.enemies[0]["HP"] == 0), (mem.enemies[1]["HP"] == 0),
+	(mem.enemies[2]["HP"] == 0), (mem.enemies[3]["HP"] == 0)
 ]
 progression_bridge = Achievement(id=0, badge=0, title="!!Clear the Blockade",
 	description="Clear the Grappler blockade on the bridge to Hatoba",
@@ -288,11 +420,77 @@ challenge_bridge.add_core(bridge_logic)
 challenge_bridge.add_core((mem.party[1] == value(0xff)))
 ach_set.add_achievement(challenge_bridge)
 
-# Misc achievements
+
+challenge_ushark = Achievement(id=0, badge=0, title="Feel the Lake Breeze",
+	description="Defeat U-Shark with only the Harley and Sentry as your party's vehicles",
+	points=10, type=AchievementType.MISSABLE)
+challenge_ushark.add_core([
+	(delta(mem.game_state) == value(2)),
+	(mem.game_state == value(2)),
+	(mem.enemies[0]["ID"] == value(0x15f)),
+	(delta(mem.bounties["U-Shark"]) == value(0)),
+	(mem.bounties["U-Shark"] == value(1))
+])
+challenge_ushark.add_alt([
+	(mem.ngplus_count < 4),
+	((mem.party_vehicles[0] == value(8)) | (mem.party_vehicles[0] == value(9)) | (mem.party_vehicles[0] == value(0xff))),
+	((mem.party_vehicles[1] == value(8)) | (mem.party_vehicles[1] == value(9)) | (mem.party_vehicles[1] == value(0xff))),
+	((mem.party_vehicles[2] == value(8)) | (mem.party_vehicles[2] == value(9)) | (mem.party_vehicles[2] == value(0xff))),
+	((mem.party_vehicles[3] == value(8)) | (mem.party_vehicles[3] == value(9)) | (mem.party_vehicles[3] == value(0xff))),
+])
+challenge_ushark.add_alt([
+	(mem.ngplus_count == 4),
+	((mem.party_vehicles[0] == value(1)) | (mem.party_vehicles[0] == value(0xff))),
+	((mem.party_vehicles[1] == value(1)) | (mem.party_vehicles[1] == value(0xff))),
+	((mem.party_vehicles[2] == value(1)) | (mem.party_vehicles[2] == value(0xff))),
+	((mem.party_vehicles[3] == value(1)) | (mem.party_vehicles[3] == value(0xff))),
+])
+challenge_ushark.add_alt([
+	(mem.ngplus_count == 7),
+	((mem.party_vehicles[0] == value(3)) | (mem.party_vehicles[0] == value(0xff))),
+	((mem.party_vehicles[1] == value(3)) | (mem.party_vehicles[1] == value(0xff))),
+	((mem.party_vehicles[2] == value(3)) | (mem.party_vehicles[2] == value(0xff))),
+	((mem.party_vehicles[3] == value(3)) | (mem.party_vehicles[3] == value(0xff))),
+])
+ach_set.add_achievement(challenge_ushark)
+
+# Kills in one combat challenge
+challenge_kills = Achievement(id=0, badge=0, title="They Just Keep Coming",
+	description="Defeat 20 enemies in a single combat encounter", points=5)
+challenge_kills.add_core([
+	measured_if(IN_COMBAT),
+	(measured(mem.kills > delta(mem.kills))).with_hits(30),
+	(reset_if(mem.game_state == value(1)))
+])
+ach_set.add_achievement(challenge_kills)
+
+## Enemy Kills
+ach_kills = [ # ID, Badge, Title, Description, Points, Threshold, Title
+	(0, 0, "!!Defeat 1000 Enemies", 'Defeat 1,000 enemies, earning the title of "Thousand Killer"',
+		5, 1000, bit3(0x0019e75f)),
+	(0, 0, "!!Defeat 5555 Enemies", 'Defeat 5,555 enemies, earning the title of "5555 Kills Leader"',
+		10, 5555, bit1(0x0019e75f)),
+	(0, 0, "!!Defeat 10000 Enemies", 'Defeat 10,000 enemies, earnign the title of "The Ace"',
+		25, 10000, bit7(0x0019e760)),
+]
+for ach_id, badge, title, desc, points, threshold, title_bit in ach_kills:
+	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
+	ach.add_core([
+		SAVE_PROTECTION,
+		measured_if(mem.kills > delta(mem.kills)),
+		(delta(mem.kills) == threshold - 1),
+		(measured(mem.kills == threshold)),
+		(delta(title_bit) == value(0)),
+		(title_bit == value(1))
+	])
+	ach_set.add_achievement(ach)
+
+## Misc achievements
 ach_igoggles = Achievement(id=0, badge=0, title="!!Received iGoggles",
 	description="Receive Maria's iGoggles, beginning your path of vengeance",
 	points=1, type=AchievementType.PROGRESSION)
 ach_igoggles.add_core([
+	SAVE_PROTECTION,
 	(mem.current_map == maps["Mado"]),
 	(delta(mem.inventory["Tools"][0][0]) == 0),
 	(mem.inventory["Tools"][0][0] == 0x05b),
@@ -304,6 +502,7 @@ ach_pocketmoney = Achievement(id=0, badge=0, title="!!Pocket Money",
 	description="Receive a reward from Karu for gifting him enough pocket money",
 	points=1, type=AchievementType.MISSABLE)
 ach_pocketmoney.add_core([
+	SAVE_PROTECTION,
 	(mem.current_map == maps["Mado Garage"]),
 	(delta(mem.pocket_money) > 28),
 	(mem.pocket_money < 2)
@@ -314,6 +513,7 @@ ach_dogs = Achievement(id=0, badge=0, title="Free to a Good Home",
 	description="Bring all of the dogs from Dog Village to the old man in the greenhouse in Mado",
 	points=2, type=AchievementType.MISSABLE)
 ach_dogs.add_core([
+	SAVE_PROTECTION,
 	(mem.current_map == maps["Mado Greenhouse"]),
 	(add_source(delta(bit4(0x19e9c2)))), (add_source(delta(bit2(0x19e9c2)))),
 	(add_source(delta(bit0(0x19e9c2)))), (add_source(delta(bit6(0x19e9c3)))),
