@@ -74,6 +74,13 @@ class Memory:
 			}
 			self.enemies.append(enemy)
 
+		self.combat_vehicles = []
+		for i in range(0x001ab3e4, 0x001ab55d, 188):
+			vehicle = {
+				"HP": dword(i),
+				"Max HP": dword(i+4)
+			}
+			self.combat_vehicles.append(vehicle)
 
 		self.bounties = {}
 		bounty_names = ["Sand Shark", "Desperoid", "Thousand Radiata",

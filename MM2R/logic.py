@@ -42,6 +42,7 @@ def note2dict(notefile: str, addr: str):
 	return note_dict
 maps = note2dict("D:\\Games\\Emulation\\Emulators\\RALibertro\\RACache\\Data\\24022-Notes.json", "0x119740")
 
+## Helper functions
 class Operator(Enum):
 	EQUAL = 0
 	LESS_THAN = 1
@@ -103,10 +104,9 @@ def partial_bitcount(
 		if measured:
 			match measured:
 				case Measured.MEASURED:
-					bit_logic = measured(bit_logic)
+					bit_logic = bit_logic.with_flag(MEASURED)
 				case Measured.MEASURED_PCT:
-					bit_logic = measured_percent(bit_logic)
-
+					bit_logic = bit_logic.with_flag(MEASURED_PCT)
 		logic[-1] = bit_logic
 
 	return logic
@@ -126,6 +126,9 @@ def add_maps(logic: list, map_ids: list|int):
 		logic.append(mem.current_map == map_ids)
 
 	return logic
+
+def party_stat(party_index: int, offset: int):
+	return mem.party[party_index] * mem.offsets["Character"] >> byte(mem.char_base + offset)
 
 ## Constants
 IN_COMBAT = (mem.game_state == value(2))
@@ -152,6 +155,10 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 		2, None, bit3(0x0019e93a), maps["Mado Garage"], None),
 	(0, 0, "!!Antares", "Hunt Antares for a Hunter in a bar east of Mado, receiving the keys to a vehicle as your reward",
 		4, None, bit5(0x0019e925), maps["Nameless Bar"], None),
+	(0, 0, "!!Stingy Hunter", 'After completing the quest "Motorcycle of Revenge", decline to give the Hunter any money, earning the title of "Stingy Hunter"',
+		1, None, bit5(0x0019e759), maps["Nameless Bar"], [(bit5(0x0019e925), True)]),
+	(0, 0, "!!Save Rinka", "Find the missing girl Rinka and return her to her parents",
+		3, AchievementType.MISSABLE, bit1(0x0019e926), maps["Trader Camp (Rinka Parents)"], None),
 	(0, 0, "!!Last Chihuahua", "Find evidence of the last remaining Chihuahua for Mack in Hatoba",
 		3, None, bit5(0x0019e949), maps["Hatoba Ferry Terminal"], None),
 	(0, 0, "!!Rescue Moriniu", "Rescue Moriniu from Adam Ant's captivity after he gets captured collecting wood for Mado's new building",
@@ -161,18 +168,33 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(0, 0, "!!Azusa Escort", "Escort the traders safely from Hatoba to Azusa",
 		3, None, bit2(0x0019e931), maps["Azusa Bottom"], None),
 	(0, 0, "!!Signal Bullet Quest", "Hunt down the Greater Manta using Zushio's Signal Bullet technology",
-		4, None, bit1(0x0019e925), maps["Bazaarska Vehicle Shop"], None)
+		4, None, bit1(0x0019e925), maps["Bazaarska Vehicle Shop"], None),
+	(0, 0, "!!Sally Quest", "Show Sally of Bazaarska the wider world, then return her home",
+		2, None, bit5(0x0019e948), maps["Bazaarska"], None),
+	(0, 0, "The Power of Music", "Unlock the ability to assign subclasses by using a strange man's Potential Headphones",
+		2, None, bit5(0x0019e81d), maps["Bar Thirsty 2F"], None),
+	(0, 0, "!!Richie Weapons Trafficking", "Perform some light weapons trafficking for Richie in the Mindless hideout",
+		3, None, bit5(0x0019e954), maps["El Nino Teleporter"], None),
+	(0, 0, "!!Iron Shark", "Hunt the Iron Shark for the traders near Bar Thirsty",
+		3, None, bit0(0x0019e928), maps["Trader Camp (Iron Shark)"], None),
+	(0, 0, "!!Cowardly Choice", 'Upon arriving at Delta Rio by boat, accept the Grappler\'s invitation to join, earning the title of "Bad Rookie"',
+		1, AchievementType.MISSABLE, bit2(0x0019e9d4), maps["Delta Rio Ferry Terminal"], [(bit2(0x0019e759), True)])
 ]
 for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=type)
 	ach.add_core([
 		SAVE_PROTECTION,
-		(mem.current_map == map_id),
-		(delta(addr) == value(0)),
-		(addr == value(1))
+		mem.current_map == map_id,
+		delta(addr) == value(0),
+		addr == value(1)
 	])
 
+	if flags:
+		for f in flags:
+			ach.add_core(f[0] == int(f[1]))
+
 	ach_set.add_achievement(ach)
+	#print(title)
 
 ## Enemy Bounties
 bounty_types = []
@@ -239,8 +261,8 @@ for ach_id, badge, title, desc, points, ach_type, bounty_name, map_id in ach_bou
 
 	logic = add_maps([SAVE_PROTECTION], map_id)
 	logic.append([
-		(delta(mem.bounties[bounty_name]) == value(0)),
-		(mem.bounties[bounty_name] == value(1))
+		delta(mem.bounties[bounty_name]) == value(0),
+		mem.bounties[bounty_name] == value(1)
 	])
 
 	ach.add_core(logic)
@@ -251,16 +273,16 @@ ach_pichipichi = Achievement(id=0, badge=0, title="!!Pichi Pichi Finale", points
 	description="Defeat the Pichi Pichi Brothers once and for all and return the stolen goods to Old Wolf in Hatoba")
 ach_pichipichi.add_core([
 	SAVE_PROTECTION,
-	(mem.bounties["Pichi Pichi Bros"] == value(1)),
-	(bit3(0x0019e955) == value(1))
+	mem.bounties["Pichi Pichi Bros"] == value(1),
+	bit3(0x0019e955) == value(1)
 ])
 ach_pichipichi.add_alt([
-	(mem.current_map == maps["Melt-town Sewers"]),
-	(delta(mem.bounties["Pichi Pichi Bros"]) == value(0))
+	mem.current_map == maps["Melt-town Sewers"],
+	delta(mem.bounties["Pichi Pichi Bros"]) == value(0)
 ])
 ach_pichipichi.add_alt([
-	(mem.current_map == maps["Hatoba Ferry Terminal 3F"]),
-	(delta(bit3(0x0019e955)) == value(0))
+	mem.current_map == maps["Hatoba Ferry Terminal 3F"],
+	delta(bit3(0x0019e955)) == value(0)
 ])
 
 ## Challenge Hunts
@@ -295,30 +317,59 @@ for ach_id, badge, title, desc, points, hunts_req in ach_hunts:
 	logic.extend(partial_bitcount(0x0019e9ba, range(0, 7)))
 	for addr in range(0x0019e9bb, 0x0019e9c1):
 		logic.append(add_source(bitcount(addr)))
-	logic.append((measured(bit7(0x0019e9c1) == hunts_req)))
+	logic.append(measured(bit7(0x0019e9c1) == hunts_req))
 
 	ach.add_core(logic)
 	ach_set.add_achievement(ach)
 
 
+## Monster Database
+ach_database = [ # ID, Badge, Title, Description, Points, Type, Threshold
+	(0, 0, "!!Monster Data 25%", "25%", 5, None, 120),
+	(0, 0, "!!Monster Data 50%", "50%", 10, None, 242),
+	(0, 0, "!!Monster Data 99%", "99%", 50, AchievementType.MISSABLE, 488)
+]
+for ach_id, badge, title, desc, points, ach_type, threshold in ach_database:
+	ach = Achievement(id=ach_id, badge=badge, title=title, type=ach_type,
+		description=f"Fill {desc} of the monster database", points=points)
+	logic = [ IN_COMBAT ]
+
+	logic.append(add_source(delta(bit0(0x0019e761))))
+	for addr in range(0x0019e762, 0x0019e79f):
+		logic.append(add_source(delta(bitcount(addr))))
+	logic.extend(partial_bitcount(addr=0x0019e79f, bits=range(4, 8),
+		is_delta=True, count=threshold-1))
+
+	logic.append(add_source(bit0(0x0019e761)))
+	for addr in range(0x0019e762, 0x0019e79f):
+		logic.append(add_source(bitcount(addr)))
+	logic.extend(partial_bitcount(addr=0x0019e79f, bits=range(4, 8),
+		count=threshold, measured=Measured.MEASURED))
+
+	ach.add_core(logic)
+	ach_set.add_achievement(ach)
+
+
+## Looting
 ach_loots = [ # ID, Badge, Title, Description, Points, Addresses, Maps
 	(0, 0, "Loot Mado", "Mado", 5, (0x00, 0, 0x00, 0), [0x00])
 ]
 
+
 ## Character Recruits
 ach_chars = [ # ID, Badge, Title, Description, Points, Character, Maps
 	(0, 0, "!!Axel Recruit", "Free Axel from captivity in El Niño, recruiting him to your party",
-		5, "Axel", maps["El Nino"]),
+		4, "Axel", maps["El Nino"]),
 	(0, 0, "!!Pochi Recruit", "Find Pochi in the Dog Village, recruiting them to your party",
-		4, "Pochi", maps["Dog Village"]),
+		3, "Pochi", maps["Dog Village"]),
 	(0, 0, "You Only Live Thrice", "Rekindle Miska's undying spirit, recruiting her to your party",
-		5, "Miska", maps["Mado Mince's Lab"]),
+		4, "Miska", maps["Mado Mince's Lab"]),
 	(0, 0, "!!Money Eater Recruit", "Grow a Money Eater, recruiting it into your party",
-		5, "Money Eater 1", [maps["Mado Garage"], maps["Bennett's House"], maps["Delta Rio Apartments 2F"]]),
+		3, "Money Eater 1", [maps["Mado Garage"], maps["Bennett's House"], maps["Delta Rio Apartments 2F"]]),
 	(0, 0, "!!Licky Recruit", "Encounter and defeat the Demon Dog Licky in the plains of Nobotke, recruiting them to your party",
-		5, "Licky", maps["Overworld"]),
+		4, "Licky", maps["Overworld"]),
 	(0, 0, "!!Hachi Recruit", "Feed Hachi its favorite treat in Taisha, recruiting them to your party",
-		4, "Hachi", maps["Taisha"])
+		3, "Hachi", maps["Taisha"])
 ]
 for ach_id, badge, title, desc, points, char_name, map_id in ach_chars:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
@@ -326,8 +377,8 @@ for ach_id, badge, title, desc, points, char_name, map_id in ach_chars:
 	logic = add_maps([SAVE_PROTECTION], map_id)
 
 	logic.append([
-		(delta(mem.chars[char_name]["Available"]) == value(0)),
-		(mem.chars[char_name]["Available"] == value(1))
+		delta(mem.chars[char_name]["Available"]) == value(0),
+		mem.chars[char_name]["Available"] == value(1)
 	])
 
 	ach.add_core(logic)
@@ -347,25 +398,21 @@ ach_levels = [ # ID, Badge, Title, Points, Class, Index, Threshold
 	(0, 0, "!!Level 60 Dog", 10, "Dog", 6, 60),
 	(0, 0, "!!Level 60 Money Eater", 10, "Money Eater", 7, 60)
 ]
-
-def party_stat(party_index: int, offset: int):
-	return mem.party[party_index] * mem.offsets["Character"] >> byte(mem.char_base + offset)
-
 for ach_id, badge, title, points, char_class, class_index, threshold in ach_levels:
 	ach = Achievement(id=ach_id, badge=badge, description="", title=title, points=points, type=None)
 	ach.add_core([
 		SAVE_PROTECTION,
-		(mem.chars["Player"]["Level"] > value(1))
+		mem.chars["Player"]["Level"] > value(1)
 	])
 
 	logic = []
 	for i in range(0, 4): # All achievements care about primary classes
 		temp_logic = [
-			(delta(party_stat(i, mem.offsets["Level"])) == threshold - 1),
-			(party_stat(i, mem.offsets["Level"]) == threshold)
+			delta(party_stat(i, mem.offsets["Level"])) == threshold - 1,
+			party_stat(i, mem.offsets["Level"]) == threshold
 		]
 		if class_index > -1: # Don't need to check what the class is for agnostic achievements
-			temp_logic.append((party_stat(i, mem.offsets["Class"]) == value(class_index)))
+			temp_logic.append(party_stat(i, mem.offsets["Class"]) == value(class_index))
 		logic.append(temp_logic)
 
 	if char_class == "Any":
@@ -382,9 +429,9 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 		sub_address = mem.offsets["Subclass"] + sub_index
 		for i in range(0, 4):
 			logic.append([ # Subclasses are index from 1, with 0 being no subclass
-				(delta(party_stat(i, sub_address)) == threshold - 1),
-				(party_stat(i, sub_address) == threshold),
-				(party_stat(i, mem.offsets["Subclass"]) == value(sub_index))
+				delta(party_stat(i, sub_address)) == threshold - 1,
+				party_stat(i, sub_address) == threshold,
+				party_stat(i, mem.offsets["Subclass"]) == value(sub_index)
 			])
 
 	for l in logic:
@@ -399,12 +446,12 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 # Grapplers on the bridge
 # Progression encounter in map without any other encounters, so we can just check if all enemies have died in an encounter
 bridge_logic = [
-	(delta(mem.game_state) == value(2)),
-	(mem.game_state == value(2)),
-	(mem.current_map == maps["Bay Bridge"]),
+	delta(mem.game_state) == value(2),
+	mem.game_state == value(2),
+	mem.current_map == maps["Bay Bridge"],
 	(delta(mem.enemies[0]["HP"]) > value(0)) | (delta(mem.enemies[1]["HP"]) > value(0)) | (delta(mem.enemies[2]["HP"]) > value(0)) | (delta(mem.enemies[3]["HP"]) > value(0)),
-	(mem.enemies[0]["HP"] == 0), (mem.enemies[1]["HP"] == 0),
-	(mem.enemies[2]["HP"] == 0), (mem.enemies[3]["HP"] == 0)
+	mem.enemies[0]["HP"] == value(0), mem.enemies[1]["HP"] == value(0),
+	mem.enemies[2]["HP"] == value(0), mem.enemies[3]["HP"] == value(0)
 ]
 progression_bridge = Achievement(id=0, badge=0, title="!!Clear the Blockade",
 	description="Clear the Grappler blockade on the bridge to Hatoba",
@@ -417,52 +464,65 @@ challenge_bridge = Achievement(id=0, badge=0, title="You and What Army?",
 	points=5, type=AchievementType.MISSABLE)
 challenge_bridge.add_core(bridge_logic)
 # Party members get added sequentially so we only need to check if the second slot has no one in it
-challenge_bridge.add_core((mem.party[1] == value(0xff)))
+challenge_bridge.add_core(mem.party[1] == value(0xff))
 ach_set.add_achievement(challenge_bridge)
 
+challenge_skunks = Achievement(id=0, badge=0, title="!!Skunks Challenge",
+	description="Defeat Skunks while all vehicles have at least 1 SP remaining",
+	points=10, type=AchievementType.MISSABLE)
+challenge_skunks.add_core([
+	IN_COMBAT,
+	delta(mem.bounties["Skunks"]) == value(0),
+	trigger(mem.bounties["Skunks"] == value(1)),
+	(mem.combat_vehicles[0]["Max HP"] == 0) | (mem.combat_vehicles[0]["HP"] > 0),
+	(mem.combat_vehicles[1]["Max HP"] == 0) | (mem.combat_vehicles[1]["HP"] > 0),
+	(mem.combat_vehicles[2]["Max HP"] == 0) | (mem.combat_vehicles[2]["HP"] > 0)
+])
+ach_set.add_achievement(challenge_skunks)
 
 challenge_ushark = Achievement(id=0, badge=0, title="Feel the Lake Breeze",
 	description="Defeat U-Shark with only the Harley and Sentry as your party's vehicles",
 	points=10, type=AchievementType.MISSABLE)
 challenge_ushark.add_core([
-	(delta(mem.game_state) == value(2)),
-	(mem.game_state == value(2)),
-	(mem.enemies[0]["ID"] == value(0x15f)),
-	(delta(mem.bounties["U-Shark"]) == value(0)),
-	(mem.bounties["U-Shark"] == value(1))
+	delta(mem.game_state) == value(2),
+	mem.game_state == value(2),
+	mem.enemies[0]["ID"] == value(0x15f),
+	delta(mem.bounties["U-Shark"]) == value(0),
+	mem.bounties["U-Shark"] == value(1)
 ])
 challenge_ushark.add_alt([
-	(mem.ngplus_count < 4),
-	((mem.party_vehicles[0] == value(8)) | (mem.party_vehicles[0] == value(9)) | (mem.party_vehicles[0] == value(0xff))),
-	((mem.party_vehicles[1] == value(8)) | (mem.party_vehicles[1] == value(9)) | (mem.party_vehicles[1] == value(0xff))),
-	((mem.party_vehicles[2] == value(8)) | (mem.party_vehicles[2] == value(9)) | (mem.party_vehicles[2] == value(0xff))),
-	((mem.party_vehicles[3] == value(8)) | (mem.party_vehicles[3] == value(9)) | (mem.party_vehicles[3] == value(0xff))),
+	mem.ngplus_count < value(4),
+	(mem.party_vehicles[0] == value(8)) | (mem.party_vehicles[0] == value(9)) | (mem.party_vehicles[0] == value(0xff)),
+	(mem.party_vehicles[1] == value(8)) | (mem.party_vehicles[1] == value(9)) | (mem.party_vehicles[1] == value(0xff)),
+	(mem.party_vehicles[2] == value(8)) | (mem.party_vehicles[2] == value(9)) | (mem.party_vehicles[2] == value(0xff)),
+	(mem.party_vehicles[3] == value(8)) | (mem.party_vehicles[3] == value(9)) | (mem.party_vehicles[3] == value(0xff)),
 ])
 challenge_ushark.add_alt([
-	(mem.ngplus_count == 4),
-	((mem.party_vehicles[0] == value(1)) | (mem.party_vehicles[0] == value(0xff))),
-	((mem.party_vehicles[1] == value(1)) | (mem.party_vehicles[1] == value(0xff))),
-	((mem.party_vehicles[2] == value(1)) | (mem.party_vehicles[2] == value(0xff))),
-	((mem.party_vehicles[3] == value(1)) | (mem.party_vehicles[3] == value(0xff))),
+	mem.ngplus_count == value(4),
+	(mem.party_vehicles[0] == value(1)) | (mem.party_vehicles[0] == value(0xff)),
+	(mem.party_vehicles[1] == value(1)) | (mem.party_vehicles[1] == value(0xff)),
+	(mem.party_vehicles[2] == value(1)) | (mem.party_vehicles[2] == value(0xff)),
+	(mem.party_vehicles[3] == value(1)) | (mem.party_vehicles[3] == value(0xff)),
 ])
 challenge_ushark.add_alt([
-	(mem.ngplus_count == 7),
-	((mem.party_vehicles[0] == value(3)) | (mem.party_vehicles[0] == value(0xff))),
-	((mem.party_vehicles[1] == value(3)) | (mem.party_vehicles[1] == value(0xff))),
-	((mem.party_vehicles[2] == value(3)) | (mem.party_vehicles[2] == value(0xff))),
-	((mem.party_vehicles[3] == value(3)) | (mem.party_vehicles[3] == value(0xff))),
+	mem.ngplus_count == value(7),
+	(mem.party_vehicles[0] == value(3)) | (mem.party_vehicles[0] == value(0xff)),
+	(mem.party_vehicles[1] == value(3)) | (mem.party_vehicles[1] == value(0xff)),
+	(mem.party_vehicles[2] == value(3)) | (mem.party_vehicles[2] == value(0xff)),
+	(mem.party_vehicles[3] == value(3)) | (mem.party_vehicles[3] == value(0xff)),
 ])
 ach_set.add_achievement(challenge_ushark)
 
 # Kills in one combat challenge
 challenge_kills = Achievement(id=0, badge=0, title="They Just Keep Coming",
-	description="Defeat 20 enemies in a single combat encounter", points=5)
+	description="Defeat 30 enemies in a single combat encounter", points=5)
 challenge_kills.add_core([
-	measured_if(IN_COMBAT),
-	(measured(mem.kills > delta(mem.kills))).with_hits(30),
-	(reset_if(mem.game_state == value(1)))
+	IN_COMBAT,
+	measured(mem.kills > delta(mem.kills)).with_hits(30),
+	reset_if(mem.game_state == value(1))
 ])
 ach_set.add_achievement(challenge_kills)
+
 
 ## Enemy Kills
 ach_kills = [ # ID, Badge, Title, Description, Points, Threshold, Title
@@ -476,14 +536,14 @@ ach_kills = [ # ID, Badge, Title, Description, Points, Threshold, Title
 for ach_id, badge, title, desc, points, threshold, title_bit in ach_kills:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 	ach.add_core([
-		SAVE_PROTECTION,
 		measured_if(mem.kills > delta(mem.kills)),
-		(delta(mem.kills) == threshold - 1),
-		(measured(mem.kills == threshold)),
-		(delta(title_bit) == value(0)),
-		(title_bit == value(1))
+		delta(mem.kills) == threshold - 1,
+		measured(mem.kills == threshold),
+		delta(title_bit) == value(0),
+		title_bit == value(1)
 	])
 	ach_set.add_achievement(ach)
+
 
 ## Misc achievements
 ach_igoggles = Achievement(id=0, badge=0, title="!!Received iGoggles",
@@ -491,11 +551,12 @@ ach_igoggles = Achievement(id=0, badge=0, title="!!Received iGoggles",
 	points=1, type=AchievementType.PROGRESSION)
 ach_igoggles.add_core([
 	SAVE_PROTECTION,
-	(mem.current_map == maps["Mado"]),
-	(delta(mem.inventory["Tools"][0][0]) == 0),
-	(mem.inventory["Tools"][0][0] == 0x05b),
-	(delta(mem.inventory["Tools"][0][1]) == 0),
-	(mem.inventory["Tools"][0][1] == 1)])
+	mem.current_map == maps["Mado"],
+	delta(mem.inventory["Tools"][0][0]) == 0,
+	mem.inventory["Tools"][0][0] == 0x05b,
+	delta(mem.inventory["Tools"][0][1]) == 0,
+	mem.inventory["Tools"][0][1] == 1
+])
 ach_set.add_achievement(ach_igoggles)
 
 ach_pocketmoney = Achievement(id=0, badge=0, title="!!Pocket Money",
@@ -503,9 +564,9 @@ ach_pocketmoney = Achievement(id=0, badge=0, title="!!Pocket Money",
 	points=1, type=AchievementType.MISSABLE)
 ach_pocketmoney.add_core([
 	SAVE_PROTECTION,
-	(mem.current_map == maps["Mado Garage"]),
-	(delta(mem.pocket_money) > 28),
-	(mem.pocket_money < 2)
+	mem.current_map == maps["Mado Garage"],
+	delta(mem.pocket_money) > 28,
+	mem.pocket_money < 2
 ])
 ach_set.add_achievement(ach_pocketmoney)
 
@@ -514,16 +575,16 @@ ach_dogs = Achievement(id=0, badge=0, title="Free to a Good Home",
 	points=2, type=AchievementType.MISSABLE)
 ach_dogs.add_core([
 	SAVE_PROTECTION,
-	(mem.current_map == maps["Mado Greenhouse"]),
-	(add_source(delta(bit4(0x19e9c2)))), (add_source(delta(bit2(0x19e9c2)))),
-	(add_source(delta(bit0(0x19e9c2)))), (add_source(delta(bit6(0x19e9c3)))),
-	(add_source(delta(bit4(0x19e9c3)))), (add_source(delta(bit2(0x19e9c3)))),
-	(add_source(delta(bit0(0x19e9c3)))), (delta(bit6(0x19e9c4)) == 7),
-	(add_source(bit4(0x19e9c2) / bit3(0x19e9c2))), (add_source(bit2(0x19e9c2) / bit1(0x19e9c2))),
-	(add_source(bit0(0x19e9c2) / bit7(0x19e9c3))), (add_source(bit6(0x19e9c3) / bit5(0x19e9c3))),
-	(add_source(bit4(0x19e9c3) / bit3(0x19e9c3))), (add_source(bit2(0x19e9c3) / bit1(0x19e9c3))),
-	(add_source(bit0(0x19e9c3) / bit7(0x19e9c4))), (remember(bit6(0x19e9c4) / bit5(0x19e9c4))),
-	(measured(recall() == 8))
+	mem.current_map == maps["Mado Greenhouse"],
+	add_source(delta(bit4(0x19e9c2))), add_source(delta(bit2(0x19e9c2))),
+	add_source(delta(bit0(0x19e9c2))), add_source(delta(bit6(0x19e9c3))),
+	add_source(delta(bit4(0x19e9c3))), add_source(delta(bit2(0x19e9c3))),
+	add_source(delta(bit0(0x19e9c3))), delta(bit6(0x19e9c4)) == value(7),
+	add_source(bit4(0x19e9c2) / bit3(0x19e9c2)), add_source(bit2(0x19e9c2) / bit1(0x19e9c2)),
+	add_source(bit0(0x19e9c2) / bit7(0x19e9c3)), add_source(bit6(0x19e9c3) / bit5(0x19e9c3)),
+	add_source(bit4(0x19e9c3) / bit3(0x19e9c3)), add_source(bit2(0x19e9c3) / bit1(0x19e9c3)),
+	add_source(bit0(0x19e9c3) / bit7(0x19e9c4)), remember(bit6(0x19e9c4) / bit5(0x19e9c4)),
+	measured(recall() == value(8))
 ])
 ach_set.add_achievement(ach_dogs)
 
