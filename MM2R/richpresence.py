@@ -64,7 +64,7 @@ def party_info(party_size):
 
 	return ", ".join(chars)
 
-rp.add_display([mem_map == 0xffff], "On the Title Screen")
+rp.add_display([mem_map == 0xfffe], "On the Title Screen")
 
 for i in range(1,4):
 	rp.add_display([mem_party[i] == 0xff, mem_ngp > 0], f"NG+@Number({mem_ngp})@Difficulty({mem_diff}) | 🗺️@Map({mem_map}) | {party_info(i)}")

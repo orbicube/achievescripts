@@ -1,4 +1,5 @@
 from pycheevos.core.helpers import *
+from pycheevos.models.generic import GameObject
 
 class Memory:
 
@@ -20,15 +21,34 @@ class Memory:
 
 	ngplus_count = byte(0x001aa3e4)
 
-	char_base = 0x00195dbc
+	char_base = 0x00195dbc	
+	vehicle_base = 0x00196d0c
 	offsets = {
 		"Class": 0xc,
 		"Level": 0x12,
+		"HP": 0x1c,
 		"Character": 0xc4,
-		"Subclass": 0x7d
+		"Subclass": 0x7d,
+		"Vehicle": 0x25c,
+		"SP": 0x10,
+		"Vending Spin": 0x140,
+		"Vending Win": 0x144
 	}
 
+	naming_type = word(0x0019ca9c)
+	naming_char = word(0x0019ca9e)
+	naming_vehicle = word(0x0019caa0)
+
 	pocket_money = byte(0x0019ea2b)
+
+	vending_base = tbyte(0x00129690) >> tbyte(0x24) >> tbyte(0x2d0) >> tbyte(0x44)
+	vending_spin = vending_base >> word(0x230)
+	vending_win = vending_base >> tbyte(0x234)
+
+	frog_base = tbyte(0x0012d66c) >> tbyte(0x06c) >> tbyte(0x0c) >> tbyte(0x170)
+	frog_state = frog_base >> tbyte(0x20)
+	frog_bet = frog_base >> tbyte(0x24)
+	frog_payout = frog_base >> tbyte(0x16c)
 
 	def __init__(self):
 		self.chars = {}
@@ -67,18 +87,19 @@ class Memory:
 			self.inventory["Tools"].append((word(i), word(i+2)))
 
 		self.enemies = []
-		for i in range(0x001ab610, 0x001abcad, 188):
+		for i in range(0x001ab5cc, 0x001abc69, 188):
 			enemy = {
-				"ID": word(i),
-				"HP": dword(i+8)
+				"Status": [byte(i+0x9), byte(i+0xa)],
+				"ID": word(i+0x44),
+				"HP": dword(i+0x4c)
 			}
 			self.enemies.append(enemy)
 
 		self.combat_vehicles = []
-		for i in range(0x001ab3e4, 0x001ab55d, 188):
+		for i in range(0x001ab398, 0x001ab511, 188):
 			vehicle = {
-				"HP": dword(i),
-				"Max HP": dword(i+4)
+				"HP": dword(i+0x4c),
+				"Max HP": dword(i+0x50)
 			}
 			self.combat_vehicles.append(vehicle)
 
