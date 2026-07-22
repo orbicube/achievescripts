@@ -283,45 +283,45 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 		4, AchievementType.MISSABLE, bit6(0x0019e93f), maps["Abandoned Building (Armgun)"], [(bit1(0x0019ea00), False)]),
 	(625292, 0, "Bickering Until the End", "Settle the feud between the three brothers trying to marry Jenny in Moro Poco",
 		3, None, bit5(0x0019e94b), maps["Moro Poco 3F"], None),
-	(1, 0, "Look Around You", "Repair Michael inside Devil Island, then find eight Space Parts using his scanner",
+	(625499, 0, "Look Around You", "Repair Michael inside Devil Island, then find eight Space Parts using his scanner",
 		4, None, bit0(0x0019e934), maps["Overworld"], None),
-	(2, 0, "Comfort at What Cost?", "Complete all three of Hyde's escalating requests to alleviate his suffering at the Staff Housing",
+	(625500, 0, "Comfort at What Cost?", "Complete all three of Hyde's escalating requests to alleviate his suffering at the Staff Housing",
 		10, None, bit6(0x0019e938), maps["Staff Housing"], None),
-	(3, 0, "Radical Radish Remedies", "Fulfil Dan's third and final request to help Cecile's illness",
+	(625501, 0, "Radical Radish Remedies", "Fulfil Dan's third and final request to help Cecile's illness",
 		5, None, bit1(0x0019e923), maps["Islaporto Sewers"], None),
-	(4, 0, "No Rehabilitation, Only Revolution", "Defeat the warden of Deathcruz, liberating the prison town",
+	(625502, 0, "No Rehabilitation, Only Revolution", "Defeat the warden of Deathcruz, liberating the prison town",
 		10, None, bit1(0x0019e921), maps["Deathcruz Roof"], None),
-	(5, 0, "Monster Closet", "Retrieve the lost coin for Dallas in Deathcruz",
+	(625503, 0, "Monster Closet", "Retrieve the lost coin for Dallas in Deathcruz",
 		3, None, bit6(0x0019e940), maps["Deathcruz Interior"], None),
-	(6, 0, "Would Hate to See Their Overdue Fees", "Find and return the missing 13th rental tank for the receptionist at Melt-Town",
+	(625504, 0, "Would Hate to See Their Overdue Fees", "Find and return the missing 13th rental tank for the receptionist at Melt-Town",
 		2, None, bit6(0x0019e931), maps["Melt-town Interior"], None),
-	(7, 0, "Cross-Continental Courier", 'Carry cargo shipments from Hoc\'s Trading Post to Melt-town, earning the title of "Wasteland Courier"',
+	(625505, 0, "Cross-Continental Courier", 'Carry cargo shipments from Hoc\'s Trading Post to Melt-town, earning the title of "Wasteland Courier"',
 		5, None, bit5(0x0019e93a), maps["Melt-town Interior"], None),
-	(8, 0, "Pichi Pichi in the Fog", "Defeat the Pichi Pichi Brothers after falling into their trap west of Melt-town",
+	(625506, 0, "Pichi Pichi in the Fog", "Defeat the Pichi Pichi Brothers after falling into their trap west of Melt-town",
 		5, None, bit5(0x0019e933), maps["Mundane Ruins (Rain Valley)"], None),
-	(9, 0, "Become Eternal", "Open the path from the Eternal Gate to Bias City",
+	(625507, 0, "Become Eternal", "Open the path from the Eternal Gate to Bias City",
 		5, None, bit7(0x0019ea29), maps["Eternal Gate MB"], None),
-	(10, 0, "Leave Your Biases at the Door", "Use the Synchronizer to unlock the entrance to Bias City",
+	(625508, 0, "Leave Your Biases at the Door", "Use the Synchronizer to unlock the entrance to Bias City",
 		5, None, bit5(0x0019e91b), maps["Bias City Outside"], None),
-	(11, 0, "Melon Madness", "Reload your completed save and exterminate the Meloween infestation in Deathcruz",
+	(625509, 0, "Melon Madness", "Reload your completed save and exterminate the Meloween infestation in Deathcruz",
 		4, None, bit6(0x0019e939), maps["Deathcruz Interior"], None),
-	(12, 0, "With Friends Like These...", "Help Professor Bato find some new friends",
+	(625510, 0, "With Friends Like These...", "Help Professor Bato find some new friends",
 		50, None, bit0(0x0019e93d), maps["Bato Lab"], None),
-	(13, 0, "New Development", "Rebuild the first building in Mado",
+	(625511, 0, "New Development", "Rebuild the first building in Mado",
 		3, None, bit4(0x0019e950), maps["Mado"], None),
-	(14, 0, "Bustling Suburb", "Rebuild the second building in Mado",
+	(625512, 0, "Bustling Suburb", "Rebuild the second building in Mado",
 		4, None, bit7(0x0019e951), maps["Mado"], None),
-	(15, 0, "Practically a Metropolis", "Rebuild the third building in Mado",
+	(625513, 0, "Practically a Metropolis", "Rebuild the third building in Mado",
 		5, None, bit6(0x0019ea3c), maps["Mado"], None),
-	(16, 0, "Worth the Wait", "Hold the wrestler's spot in line at the rebuilt Mado Pharmacy",
+	(625514, 0, "Worth the Wait", "Hold the wrestler's spot in line at the rebuilt Mado Pharmacy",
 		1, None, bit7(0x0019e953), maps["Mado Pharmacy"], None),
-	(17, 0, "Back to School", 'Complete both combat lessons in the rebuilt Mado School, earning the title of "Super Adult"',
+	(625515, 0, "Back to School", 'Complete both combat lessons in the rebuilt Mado School, earning the title of "Super Adult"',
 		3, None, bit1(0x0019e75b), maps["Mado School"], [(bit4(0x0019ea60), True), (bit3(0x0019ea60), True)]),
-	(18, 0, "Long Lost Libations", "Sell 10 bottles of vintage liquor to the rebuilt Mado Bar",
+	(625516, 0, "Long Lost Libations", "Sell 10 bottles of vintage liquor to the rebuilt Mado Bar",
 		2, None, bit5(0x0019e953), maps["Mado Bar"], None),
-	(19, 0, "Skittish Customer", "Deliver a package from Smith in the rebuilt Mado Bar to the Human Village",
+	(625517, 0, "Skittish Customer", "Deliver a package from Smith in the rebuilt Mado Bar to the Human Village",
 		3, None, bit2(0x0019e933), maps["Human Village"], None),
-	(20, 0, "Sin City", "Repair all machines in the rebuilt Mado Casino",
+	(625518, 0, "Sin City", "Repair all machines in the rebuilt Mado Casino",
 		4, None, bit3(0x0019e91b), maps["Mado Casino"], None),
 ]
 for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
@@ -444,6 +444,7 @@ ach_pichipichi.add_alt([
 ])
 ach_set.add_achievement(ach_pichipichi)
 
+##################
 ## Challenge Hunts
 ach_hunts = [ # ID, Badge, Title, Description Override, Points, Hunts Required
 	(625321, 0, "Sprouting Challenger", 'Clear 10 Challenge Hunts, earning the title of "Challenger"', 5, 10),
@@ -482,6 +483,7 @@ for ach_id, badge, title, desc, points, hunts_req in ach_hunts:
 	ach_set.add_achievement(ach)
 
 
+###################
 ## Monster Database
 ach_database = [ # ID, Badge, Title, Description, Points, Type, Threshold
 	(625326, 0, "Research Assistant", "25%", 5, None, 120),
@@ -509,6 +511,7 @@ for ach_id, badge, title, desc, points, ach_type, threshold in ach_database:
 	ach_set.add_achievement(ach)
 
 
+#####################
 ## Character Recruits
 ach_chars = [ # ID, Badge, Title, Description, Points, Character, Maps
 	(625329, 0, "El Niño Espionage", "Free Axel from captivity in El Niño, recruiting him to your party",
@@ -535,6 +538,7 @@ for ach_id, badge, title, desc, points, char_name, map_id in ach_chars:
 	ach_set.add_achievement(ach)
 
 
+################
 ## Class Levels
 ach_levels = [ # ID, Badge, Title, Points, Class, Index, Threshold
 	(625335, 0, "Following in Maria's Footsteps", 3, "Any", -1, 20),
@@ -591,10 +595,11 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 	ach_set.add_achievement(ach)
 
 
+###########################
 ## Progression / Challenges
 
-# Grapplers on the bridge
-# Progression encounter in map without any other encounters, so we can just check if all enemies have died in an encounter
+# Progression encounter in map without any other encounters
+# So we can just check if all enemies have died in an encounter
 bridge_logic = combat_logic(maps["Bay Bridge"], (0x13c, 0x13c, 0x12d, 0x12d))
 progression_bridge = Achievement(id=625345, badge=0, title="Unpaid Tolls",
 	description="Clear the Grappler blockade on the bridge to Hatoba",
@@ -688,7 +693,7 @@ challenge_bullfrog.add_core([
 ])
 ach_set.add_achievement(challenge_bullfrog)
 
-challenge_fog = Achievement(id=0, badge=0, title="Cryptid Sighting",
+challenge_fog = Achievement(id=625519, badge=0, title="Cryptid Sighting",
 	description='During the quest "In the Fog", defeat the Huge Recon UFO and King Saurus in one session',
 	points=25, type=AchievementType.MISSABLE)
 challenge_fog.add_core([
@@ -751,6 +756,7 @@ for i in range(0, 4):
 ach_set.add_achievement(challenge_vlad)
 
 
+###############
 ## Enemy Kills
 ach_kills = [ # ID, Badge, Title, Description, Points, Threshold, Title
 	(625355, 0, "Why's Everyone So Hostile?", 'Defeat 1,000 enemies, earning the title of "Thousand Killer"',
@@ -782,7 +788,8 @@ challenge_kills.add_core([
 ach_set.add_achievement(challenge_kills)
 
 
-## Vehicle Achievements
+############
+## Vehicles
 # For vehicles out in the field, there's no flags to indicate we've acquired them
 # There's memory addresses that get used when the screen to name a character or vehicle appears
 ach_vehicles = [ # ID, Badge, Title, Description, Points, Vehicle Index, Map, Extra Flags
@@ -822,37 +829,47 @@ for ach_id, badge, title, desc, points, vehicle_index, map_id, flags in ach_vehi
 
 	ach_set.add_achievement(ach)
 
-## World Map achievements
+
+#############
+## World Map
 ach_worldmaps = [ # ID, Badge, Title, Description, Points, Threshold
-	(0, 0, "Acclimation", "Fill in 25% of the overworld map", 3, 140),
-	(0, 0, "Exploration", "Fill in 50% of the overworld map", 5, 280),
-	(0, 0, "Subjugation", 'Fill in all of the overworld map, earning the title of "World Traveler"',
+	(625520, 0, "Acclimation", "Fill in 25% of the overworld map", 3, 140),
+	(625521, 0, "Exploration", "Fill in 50% of the overworld map", 5, 280),
+	(625522, 0, "Subjugation", 'Fill in all of the overworld map, earning the title of "World Traveler"',
 		10, 560)
 ]
 for ach_id, badge, title, desc, points, threshold in ach_worldmaps:
 	ach = Achievement(id=ach_id, badge=badge, title=f"Wasteland {title}", description=desc, points=points)
-	ach.add_core([
-		SAVE_PROTECTION,
-		pause_if((mem.map_base > value(0)) & (delta(mem.map_ptr) == value(0))),
-		pause_if((mem.map_base > value(0)) & (mem.map_ptr == value(0))),
-		pause_if(mem.map_base == value(0)),
-		pause_if(delta(mem.map_base) == value(0))
-	])
+	ach.add_core(SAVE_PROTECTION)
 
-	for i in range(0, 560):
+	if threshold == 560:
+		ach.add_core([
+			pause_if((mem.map_base > value(0)) & (delta(mem.map_ptr) == value(0))),
+			pause_if((mem.map_base > value(0)) & (mem.map_ptr == value(0))),
+			pause_if(delta(mem.map_base) == value(0)),
+			pause_if(mem.map_base == value(0)),
+		])
+	else:
+		ach.add_core([
+			(mem.map_base > value(0)) & (delta(mem.map_ptr) > value(0)),
+			(mem.map_base > value(0)) & (mem.map_ptr > value(0)),
+		])
+
+	for i in range(0, 559):
 		ach.add_core(add_source(delta(mem.map_vals[i])))
-	ach.add_core(delta(mem.map_vals[560]) < value(threshold * 8))
-	for i in range(0, 560):
+	ach.add_core(delta(mem.map_vals[559]) < value(threshold * 8))
+	for i in range(0, 559):
 		ach.add_core(add_source(mem.map_vals[i]))
-
-	logic = (mem.map_vals[560] >= value(threshold * 8))
+	logic = (mem.map_vals[559] >= value(threshold * 8))
 	if threshold == 560:
 		logic = (measured_percent(logic))
 	ach.add_core(logic)
-	
+
 	ach_set.add_achievement(ach)
 
-## Misc achievements
+
+###########
+## Misc
 ach_igoggles = Achievement(id=625367, badge=0, title="From the Ashes",
 	description="Receive Maria's iGoggles, beginning your path of vengeance",
 	points=1, type=AchievementType.PROGRESSION)
@@ -895,7 +912,7 @@ ach_dogs.add_core([
 ])
 ach_set.add_achievement(ach_dogs)
 
-ach_modders = Achievement(id=0, badge=0, title="Pit Crew",
+ach_modders = Achievement(id=625523, badge=0, title="Pit Crew",
 	description="Send every vehicle specialist to Nile's Garage in Mado",
 	points=5, type=None)
 ach_modders.add_core([
@@ -907,7 +924,7 @@ ach_modders.add_core([
 ])
 ach_set.add_achievement(ach_modders)
 
-ach_dogsystem = Achievement(id=0, badge=0, title="Every Dog Has Its System",
+ach_dogsystem = Achievement(id=625524, badge=0, title="Every Dog Has Its System",
 	description="Register every location into the Dog System for use as fast travel",
 	points=5, type=None)
 ach_dogsystem.add_core([
@@ -935,7 +952,7 @@ ach_vending.add_core([
 ])
 ach_set.add_achievement(ach_vending)
 
-ach_noguchi = Achievement(id=0, badge=0, title="Not a Placebo",
+ach_noguchi = Achievement(id=625525, badge=0, title="Not a Placebo",
 	description="Take a sample from the production line at Noguchi Chemicals",
 	points=2, type=None)
 ach_noguchi.add_core([
@@ -946,6 +963,34 @@ ach_noguchi.add_core([
 	bit5(0x0019e9a3) == value(0)
 ])
 ach_set.add_achievement(ach_noguchi)
+
+ach_metaldetector = Achievement(id=625551, badge=0, title="All That Glitters",
+	description='Reveal 100 items using a Metal Detector, earning the title of "Detector Ironman"',
+	points=5, type=None)
+ach_metaldetector.add_core([
+	pause_if(~SAVE_PROTECTION),
+	delta(bit3(0x0019e75e)) == value(0),
+	bit3(0x0019e75e) == value(1),
+	delta(mem.detector_count) < value(100),
+	measured(mem.detector_count >= value(100)),
+	measured_if(mem.detector_count > delta(mem.detector_count))
+])
+ach_set.add_achievement(ach_metaldetector)
+
+ach_shellcraft = Achievement(id=625552, badge=0, title="World of Shellcraft",
+	description='Craft 100 shells using the Artist ability Craft Shell, earning the title of "Artistic Demon"',
+	points=5)
+ach_shellcraft.add_core([
+	pause_if(~SAVE_PROTECTION),
+	delta(bit1(0x0019e75e)) == value(0),
+	bit1(0x0019e75e) == value(1),
+	remember(delta(mem.shell_count) / value(2)),
+	recall() == value(99),
+	remember(mem.shell_count / value(2)),
+	measured(recall() == value(100)),
+	measured_if(mem.shell_count > delta(mem.shell_count))
+])
+ach_set.add_achievement(ach_shellcraft)
 
 ach_ribbitrace = Achievement(id=625371, badge=0, title="Froggy Derby",
 	description="Place a winning bet on a pair of frogs with odds of 5 or higher",
