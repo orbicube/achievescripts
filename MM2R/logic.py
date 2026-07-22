@@ -112,10 +112,6 @@ def partial_bitcount(
 	return logic
 
 
-def bitcount_range(start_addr: int, start_bit: int, end_addr: int, end_bit: int, goal: int = 0):
-	return "foo"
-
-
 def add_maps(map_ids: tuple|int):
 	logic = []
 
@@ -201,92 +197,132 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 		4, None, bit1(0x0019e925), maps["Bazaarska Vehicle Shop"], None),
 	(625249, 0, "No Place Like Home", "Show Sally of Bazaarska the wider world, then return her home",
 		2, None, bit5(0x0019e948), maps["Bazaarska"], None),
-	(0, 0, "The Power of Music", "Unlock the ability to assign subclasses by using a strange man's Potential Headphones",
+	(625250, 0, "The Power of Music", "Unlock the ability to assign subclasses by using a strange man's Potential Headphones",
 		2, None, bit5(0x0019e81d), maps["Bar Thirsty 2F"], None),
-	(0, 0, "Arming the Resistance", "Perform some light weapons trafficking for Richie in the Mindless hideout",
+	(625251, 0, "Arming the Resistance", "Perform some light weapons trafficking for Richie in the Mindless hideout",
 		3, None, bit5(0x0019e954), maps["El Nino Teleporter"], None),
-	(0, 0, "Squirrelly Shark", "Hunt the Iron Shark for the traders near Bar Thirsty",
+	(625252, 0, "Squirrelly Shark", "Hunt the Iron Shark for the traders near Bar Thirsty",
 		3, None, bit0(0x0019e928), maps["Trader Camp (Iron Shark)"], None),
-	(0, 0, "You'll Turn That Easily?", 'Upon arriving at Delta Rio by boat, accept the Grappler\'s invitation to join, earning the title of "Bad Rookie"',
+	(625253, 0, "You'll Turn That Easily?", 'Upon arriving at Delta Rio by boat, accept the Grappler\'s invitation to join, earning the title of "Bad Rookie"',
 		1, AchievementType.MISSABLE, bit2(0x0019e9d4), maps["Delta Rio Ferry Terminal"], [(bit2(0x0019e759), True)]),
-	(0, 0, "In from the Cold", "Find the spy within Mendoza's inner circle and deliver their report to Richie",
+	(625254, 0, "In from the Cold", "Find the spy within Mendoza's inner circle and deliver their report to Richie",
 		2, None, bit7(0x0019e956), maps["El Nino Mindless Hideout"], None),
-	(0, 0, "Cooking the Books", 'Report 300G of sales while tending the ill trader\'s shop, earning the title of "Shrewd Salesperson"',
+	(625255, 0, "Cooking the Books", 'Report 300G of sales while tending the ill trader\'s shop, earning the title of "Shrewd Salesperson"',
 		1, AchievementType.MISSABLE, bit6(0x0019e75a), maps["Trader Camp (Shopkeep) Left Tent"], None),
-	(0, 0, "MarilynLivingSpace", 'Buy an apartment for Marilyn in Delta Rio and fulfil her request to decorate it, earning the title of "Marilyn\'s Daddy"',
+	(625256, 0, "MarilynLivingSpace", 'Buy an apartment for Marilyn in Delta Rio and fulfil her request to decorate it, earning the title of "Marilyn\'s Daddy"',
 		2, AchievementType.MISSABLE, bit6(0x0019e75e), maps["Delta Rio Boat Shops"], None),
-	(0, 0, "Caught with Your Pants Down", "Defeat the monster hiding in Natalie's closet in Delta Rio",
+	(625257, 0, "Caught with Your Pants Down", "Defeat the monster hiding in Natalie's closet in Delta Rio",
 		3, None, bit7(0x0019e946), maps["Delta Rio Apartments 3F"], None),
-	(0, 0, "Pichi Pichi on the Coast", "Defeat the Pichi Pichi Brothers after falling into their trap west of Delta Rio",
+	(625258, 0, "Pichi Pichi on the Coast", "Defeat the Pichi Pichi Brothers after falling into their trap west of Delta Rio",
 		3, None, bit3(0x0019e932), maps["Mundane Ruins (Delta Rio)"], None),
-	(0, 0, "Salvaged Love", "Salvage and return the Silver Music Box to Saki at Bennett's House",
+	(625259, 0, "Salvaged Love", "Salvage and return the Silver Music Box to Saki at Bennett's House",
 		3, None, bit4(0x0019e92a), maps["Bennett's House"], None),
-	(0, 0, "Mechanical Grudge", 'Complete "Mechanical Employee" without Brute dying',
+	(625260, 0, "Mechanical Grudge", 'Complete "Mechanical Employee" without Brute dying',
 		2, AchievementType.MISSABLE, bit7(0x0019e941), maps["Islaporto Dock"], [(bit1(0x0019ea13), False)]),
-	(0, 0, "Unusual Delicacy", "Retrieve and Ant Egg for the barkeep in Hatoba",
+	(625261, 0, "Unusual Delicacy", "Retrieve and Ant Egg for the barkeep in Hatoba",
 		5, None, bit5(0x0019e943), maps["Hatoba Bar"], None),
-	(0, 0, "I've Lost My Mojo!", "Return Kenzie's macho extract that was stolen from him near Salon du Princess",
+	(625262, 0, "I've Lost My Mojo!", "Return Kenzie's macho extract that was stolen from him near Salon du Princess",
 		3, AchievementType.MISSABLE, bit0(0x0019e931), maps["Overworld"], None),
-	(0, 0, "Petrochemical Potential", "Deliver Oiholotoxin to the doctor in Isalporto, gaining access to an endless supply of medication",
+	(625263, 0, "Petrochemical Potential", "Deliver Oiholotoxin to the doctor in Isalporto, gaining access to an endless supply of medication",
 		2, None, bit4(0x0019e9d6), maps["Islaporto Hospital"], None),
-	(0, 0, "Am I Me?", "Help Danny in Islaporto eliminate his clones",
+	(625264, 0, "Am I Me?", "Help Danny in Islaporto eliminate his clones",
 		3, None, bit6(0x0019e94c), maps["Islaporto"], None),
-	(0, 0, "Marble Madness", "Return the item believed to be stolen from the tourist visiting Taisha",
+	(625265, 0, "Marble Madness", "Return the item believed to be stolen from the tourist visiting Taisha",
 		2, None, bit2(0x0019e94e), maps["Taisha"], None),
-	(0, 0, "Profane Profit", "Destroy the saisen outside Taisha's shrine, taking the offerings to the God of War for yourself",
+	(625266, 0, "Profane Profit", "Destroy the saisen outside Taisha's shrine, taking the offerings to the God of War for yourself",
 		3, None, bit3(0x0019e945), maps["Taisha"], None),
-	(0, 0, "Big Egg", 'Complete "The Ice Excavator" after destroying all of Taisha\'s ice walls',
+	(625267, 0, "Big Egg", 'Complete "The Ice Excavator" after destroying all of Taisha\'s ice walls',
 		4, AchievementType.MISSABLE, bit3(0x0019e92f), maps["Taisha Ice Cave"], [(bit1(0x0019e9e6), True)]),
-	(0, 0, "Roadside Assistance", "Give the stranded vehicle near Taisha a new engine",
+	(625268, 0, "Roadside Assistance", "Give the stranded vehicle near Taisha a new engine",
 		3, None, bit2(0x0019e938), maps["Overworld"], None),
-	(0, 0, "Stay Hydrated", "Complete Dan's request to help his sister Cecile in Islaporto",
+	(625269, 0, "Stay Hydrated", "Complete Dan's request to help his sister Cecile in Islaporto",
 		3, None, bit5(0x0019e923), maps["Islaporto Sewers"], None),
-	(0, 0, "What Happened Last Night?", "Hunt the Trash Giant for Jin in Delta Rio, stopping the rampage of Wild Buses",
+	(625270, 0, "What Happened Last Night?", "Hunt the Trash Giant for Jin in Delta Rio, stopping the rampage of Wild Buses",
 		5, None, bit4(0x0019e928), maps["Trader Camp (Scrap Metal)"], None),
-	(0, 0, "Lighthouse Liberation", "Defeat Mendoza and free El Niño from the Grappler tyranny",
+	(625271, 0, "Lighthouse Liberation", "Defeat Mendoza and free El Niño from the Grappler tyranny",
 		10, None, bit0(0x0019e958), maps["El Nino Observatory"], None),
-	(0, 0, "Precious Family... Appliance?", "Find the golden fridge that was stolen from Emma in El Niño",
+	(625272, 0, "Precious Family... Appliance?", "Find the golden fridge that was stolen from Emma in El Niño",
 		2, None, bit2(0x0019e959), maps["El Nino Observatory 2F"], None),
-	(0, 0, "Messy Business Arrangements", "Tow the lost ship back to Delta Rio",
+	(625273, 0, "Messy Business Arrangements", "Tow the lost ship back to Delta Rio",
 		2, None, bit7(0x0019e944), maps["Delta Rio"], None),
-	(0, 0, "Unbothered. Moisturized. Happy. In My Tent. Focused. Flourishing.", "Help the witch Jella in brewing a potion north of Islaporto",
+	(625274, 0, "Unbothered. Moisturized. Happy. In My Tent. Focused. Flourishing", "Help the witch Jella in brewing a potion north of Islaporto",
 		4, None, bit7(0x0019e92f), maps["Witch Tent"], None),
-	(0, 0, "Pichi Pichi in the Wind", "Defeat the Pichi Pichi Brothers after falling into their trap near the Wind Farm",
+	(625275, 0, "Pichi Pichi in the Wind", "Defeat the Pichi Pichi Brothers after falling into their trap near the Wind Farm",
 		4, None, bit7(0x0019e933), maps["Trader Camp (Wind Farm)"], None),
-	(0, 0, "Stablizing Succor", "After finding the Combotron for Anri in Taisha, give them some Atomic Stabilizer to heal their child",
+	(625276, 0, "Stablizing Succor", "After finding the Combotron for Anri in Taisha, give them some Atomic Stabilizer to heal their child",
 		5, None, bit4(0x0019ea36), maps["Taisha Residential Building 3F"], [(bit6(0x0019e94f), True)]),
-	(0, 0, "Loch Locusts", "Clear the pleague of Aqua Walkers near Helmets island for the salvager in Isalporto",
+	(625277, 0, "Loch Locusts", "Clear the pleague of Aqua Walkers near Helmets island for the salvager in Isalporto",
 		5, None, bit2(0x0019e93f), maps["Islaporto Salvage"], None),
-	(0, 0, "Shooting Blanks", "Settle the duel between Marco and Izu in Swan with neither dying",
+	(625278, 0, "Shooting Blanks", "Settle the duel between Marco and Izu in Swan with neither dying",
 		3, AchievementType.MISSABLE, bit2(0x0019e944), maps["Swan Inside"], [(bit0(0x0019ea1f), False)]),
-	(0, 0, "The Master of Unlocking", "After acquiring the Lock Hacker, use it to open every lock in the world",
+	(625279, 0, "The Master of Unlocking", "After acquiring the Lock Hacker, use it to open every lock in the world",
 		5, None, bit1(0x0019e94d), None, [(bit3(0x0019e94d), True)]),
-	(0, 0, "None of My Business", "Free the man stuck in a closet in the Delta Rio apartments",
+	(625280, 0, "None of My Business", "Free the man stuck in a closet in the Delta Rio apartments",
 		1, None, bit4(0x0019e9a3), maps["Delta Rio Apartments"], None),
-	(0, 0, "Chariot of the Lake", "Return Swan to its former glory, gaining its use as a ship",
+	(625281, 0, "Chariot of the Lake", "Return Swan to its former glory, gaining its use as a ship",
 		5, None, bit6(0x0019e92d), maps["Swan Outside"], None),
-	(0, 0, "Nostalgic Nourishment", "Give Bennett a taste of his youth with some canned ramen",
+	(625282, 0, "Nostalgic Nourishment", "Give Bennett a taste of his youth with some canned ramen",
 		3, None, bit6(0x0019e92b), maps["Bennett's House"], None),
-	(0, 0, "Without a Trace", "Figure out what happened to Toko of Islaporto's husband",
+	(625283, 0, "Without a Trace", "Figure out what happened to Toko of Islaporto's husband",
 		5, None, bit0(0x0019e92b), maps["Islaporto Bar 2F"], None),
-	(0, 0, "Case Closed", "Solve the murder mystery at the Nadir hotel",
+	(625284, 0, "Case Closed", "Solve the murder mystery at the Nadir hotel",
 		5, None, bit0(0x0019e93b), maps["Nadir Outside"], None),
-	(0, 0, "Eye for an Eye", "Find Tony's murderer hiding from society and deliver retribution",
+	(625285, 0, "Eye for an Eye", "Find Tony's murderer hiding from society and deliver retribution",
 		3, None, bit6(0x0019e935), (maps["Freak Island Cave to Groween"], maps["Freak Island Jungle"]), None),
-	(0, 0, "Escape from Freak Island", "Find Latoya on Freak Island and bring her back to her family",
+	(625286, 0, "Escape from Freak Island", "Find Latoya on Freak Island and bring her back to her family",
 		4, None, bit4(0x0019e935), maps["Latoya's House"], None),
-	(0, 0, "Built for Love", "Figure out Marilyn's secret at her apartment in Delta Rio",
+	(625287, 0, "Built for Love", "Figure out Marilyn's secret at her apartment in Delta Rio",
 		1, None, bit6(0x0019e9d6), maps["Delta Rio Apartments 2F"], [(bit5(0x0019e9d6), False), (bit3(0x0019e8c7), True)]),
-	(0, 0, "Alleviating Ailments", "Fulfill Dan's second request to help his sister Cecile in Islaporto",
+	(625288, 0, "Alleviating Ailments", "Fulfill Dan's second request to help his sister Cecile in Islaporto",
 		2, None, bit3(0x0019e923), maps["Islaporto Sewers"], None),
-	(0, 0, "Empty Nester", "Find and return Cecile's missing Money Eater",
+	(625289, 0, "Empty Nester", "Find and return Cecile's missing Money Eater",
 		4, None, bit6(0x0019e924), maps["Islaporto Sewers"], None),
-	(0, 0, "Enthralled in Ecstasy", "Bring Luckyna some Blue Crab Pincers for... personal use",
+	(625290, 0, "Enthralled in Ecstasy", "Bring Luckyna some Blue Crab Pincers for... personal use",
 		3, None, bit5(0x0019e930), maps["Trader Camp (Luckyna)"], None),
-	(0, 0, "Arm Wrestling Contest Winner", 'Complete "Single Arm on the Lakebed" with Goodman and Irena surviving',
+	(625291, 0, "Arm Wrestling Contest Winner", 'Complete "Single Arm on the Lakebed" with Goodman and Irena surviving',
 		4, AchievementType.MISSABLE, bit6(0x0019e93f), maps["Abandoned Building (Armgun)"], [(bit1(0x0019ea00), False)]),
-	(0, 0, "Bickering Until the End", "Settle the feud between the three brothers trying to marry Jenny in Moro Poco",
-		3, None, bit5(0x0019e94b), maps["Moro Poco 3F"], None)
+	(625292, 0, "Bickering Until the End", "Settle the feud between the three brothers trying to marry Jenny in Moro Poco",
+		3, None, bit5(0x0019e94b), maps["Moro Poco 3F"], None),
+	(1, 0, "Look Around You", "Repair Michael inside Devil Island, then find eight Space Parts using his scanner",
+		4, None, bit0(0x0019e934), maps["Overworld"], None),
+	(2, 0, "Comfort at What Cost?", "Complete all three of Hyde's escalating requests to alleviate his suffering at the Staff Housing",
+		10, None, bit6(0x0019e938), maps["Staff Housing"], None),
+	(3, 0, "Radical Radish Remedies", "Fulfil Dan's third and final request to help Cecile's illness",
+		5, None, bit1(0x0019e923), maps["Islaporto Sewers"], None),
+	(4, 0, "No Rehabilitation, Only Revolution", "Defeat the warden of Deathcruz, liberating the prison town",
+		10, None, bit1(0x0019e921), maps["Deathcruz Roof"], None),
+	(5, 0, "Monster Closet", "Retrieve the lost coin for Dallas in Deathcruz",
+		3, None, bit6(0x0019e940), maps["Deathcruz Interior"], None),
+	(6, 0, "Would Hate to See Their Overdue Fees", "Find and return the missing 13th rental tank for the receptionist at Melt-Town",
+		2, None, bit6(0x0019e931), maps["Melt-town Interior"], None),
+	(7, 0, "Cross-Continental Courier", 'Carry cargo shipments from Hoc\'s Trading Post to Melt-town, earning the title of "Wasteland Courier"',
+		5, None, bit5(0x0019e93a), maps["Melt-town Interior"], None),
+	(8, 0, "Pichi Pichi in the Fog", "Defeat the Pichi Pichi Brothers after falling into their trap west of Melt-town",
+		5, None, bit5(0x0019e933), maps["Mundane Ruins (Rain Valley)"], None),
+	(9, 0, "Become Eternal", "Open the path from the Eternal Gate to Bias City",
+		5, None, bit7(0x0019ea29), maps["Eternal Gate MB"], None),
+	(10, 0, "Leave Your Biases at the Door", "Use the Synchronizer to unlock the entrance to Bias City",
+		5, None, bit5(0x0019e91b), maps["Bias City Outside"], None),
+	(11, 0, "Melon Madness", "Reload your completed save and exterminate the Meloween infestation in Deathcruz",
+		4, None, bit6(0x0019e939), maps["Deathcruz Interior"], None),
+	(12, 0, "With Friends Like These...", "Help Professor Bato find some new friends",
+		50, None, bit0(0x0019e93d), maps["Bato Lab"], None),
+	(13, 0, "New Development", "Rebuild the first building in Mado",
+		3, None, bit4(0x0019e950), maps["Mado"], None),
+	(14, 0, "Bustling Suburb", "Rebuild the second building in Mado",
+		4, None, bit7(0x0019e951), maps["Mado"], None),
+	(15, 0, "Practically a Metropolis", "Rebuild the third building in Mado",
+		5, None, bit6(0x0019ea3c), maps["Mado"], None),
+	(16, 0, "Worth the Wait", "Hold the wrestler's spot in line at the rebuilt Mado Pharmacy",
+		1, None, bit7(0x0019e953), maps["Mado Pharmacy"], None),
+	(17, 0, "Back to School", 'Complete both combat lessons in the rebuilt Mado School, earning the title of "Super Adult"',
+		3, None, bit1(0x0019e75b), maps["Mado School"], [(bit4(0x0019ea60), True), (bit3(0x0019ea60), True)]),
+	(18, 0, "Long Lost Libations", "Sell 10 bottles of vintage liquor to the rebuilt Mado Bar",
+		2, None, bit5(0x0019e953), maps["Mado Bar"], None),
+	(19, 0, "Skittish Customer", "Deliver a package from Smith in the rebuilt Mado Bar to the Human Village",
+		3, None, bit2(0x0019e933), maps["Human Village"], None),
+	(20, 0, "Sin City", "Repair all machines in the rebuilt Mado Casino",
+		4, None, bit3(0x0019e91b), maps["Mado Casino"], None),
 ]
 for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=type)
@@ -300,64 +336,81 @@ for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
 	ach_set.add_achievement(ach)
 	#print(title)
 
+ach_cannon = Achievement(id=0, badge=0, title="Cannon Connoisseur",
+	description='Complete both the "Vintage Cannon" and "The Desert Tank Freak" quests',
+	points=4, type=AchievementType.MISSABLE)
+ach_cannon.add_core([
+	SAVE_PROTECTION,
+	bit2(0x0019e941) == value(1),
+	bit1(0x0019e942) == value(1)
+])
+ach_cannon.add_alt([
+	mem.current_map == maps["Deathcruz Interior"],
+	delta(bit2(0x0019e941)) == value(0)
+])
+ach_cannon.add_alt([
+	mem.current_map == maps["Caterpillar Villa"],
+	delta(bit1(0x0019e942)) == value(0)
+])
+
 ## Enemy Bounties
 bounty_types = []
 ach_bounties = [ # ID, Badge, Title, Description, Points, Type, Name, Map
-	(0, 0, "Shark out of Sand", "Defeat the Sand Shark in the desert east of Mado",
+	(625293, 0, "Shark out of Sand", "Defeat the Sand Shark in the desert east of Mado",
 		3, None, "Sand Shark", maps["Overworld"]),
-	(0, 0, "Desperoid for Attention", "Defeat the Desperoid near El Niño",
+	(625294, 0, "Desperoid for Attention", "Defeat the Desperoid near El Niño",
 		3, None, "Desperoid", maps["Overworld"]),
-	(0, 0, "Adam Ant-ium", "Defeat Adam Ant inside its nest near the Forest Watchtower",
+	(625295, 0, "Adam Ant-ium", "Defeat Adam Ant inside its nest near the Forest Watchtower",
 		5, None, "Adam Ant", maps["Giant Ant Cave B4F"]),
-	(0, 0, "Recursive Symmetry", "Defeat the Thousand Radiata in the forest west of Hatoba",
+	(625296, 0, "Recursive Symmetry", "Defeat the Thousand Radiata in the forest west of Hatoba",
 		5, None, "Thousand Radiata", maps["Overworld"]),
-	(0, 0, "Rhino Gone", "Defeat the Rhinogon in the deserts near Bar Thirsty",
+	(625297, 0, "Rhino Gone", "Defeat the Rhinogon in the deserts near Bar Thirsty",
 		4, None, "Rhinogon", maps["Overworld"]),
-	(0, 0, "Monkey Wrenched", "Defeat Skunks atop the Grappler Tower",
+	(625298, 0, "Monkey Wrenched", "Defeat Skunks atop the Grappler Tower",
 		10, AchievementType.PROGRESSION, "Skunks", maps["Grappler Tower 10F"]),
-	(0, 0, "Myth No Longer", "Defeat the Myth Ladybug near Nobotoke Village",
+	(625299, 0, "Myth No Longer", "Defeat the Myth Ladybug near Nobotoke Village",
 		10, None, "Myth Ladybug", maps["Overworld"]),
-	(0, 0, "Intense Workout Session", "Defeat Madam Muscle in the Protein Palace",
+	(625300, 0, "Intense Workout Session", "Defeat Madam Muscle in the Protein Palace",
 		10, None, "Madam Muscle", maps["Protein Palace B5F"]),
-	(0, 0, "Intruder Alert", "Defeat the Kamikaze King northeast of Islaporto",
+	(625301, 0, "Intruder Alert", "Defeat the Kamikaze King northeast of Islaporto",
 		10, None, "Kamikaze King", maps["Overworld"]),
-	(0, 0, "From Hell's Heart I Shoot at Thee", "Defeat U-Shark, completing Captain Beihab's quest for vengeance and acquiring your own ship",
+	(625302, 0, "From Hell's Heart I Shoot at Thee", "Defeat U-Shark, completing Captain Beihab's quest for vengeance and acquiring your own ship",
 		10, AchievementType.PROGRESSION, "U-Shark", maps["Overworld"]),
-	(0, 0, "Fighting Flying Fish for Funds", "Defeat the Flying Fish lurking in the waters near Delta Rio",
+	(625303, 0, "Fighting Flying Fish for Funds", "Defeat the Flying Fish lurking in the waters near Delta Rio",
 		5, None, "Flying Fish", maps["Overworld"]),
-	(0, 0, "From the Flash Game?", "Defeat the Dust Hominid inside the Wind Farm",
+	(625304, 0, "From the Flash Game?", "Defeat the Dust Hominid inside the Wind Farm",
 		5, None, "Dust Hominid", maps["Wind Farm B1F"]),
-	(0, 0, "Totally Turtle! Totally Party", "Defeat the Total Turtle in the waters west of Islaporto",
+	(625305, 0, "Totally Turtle! Totally Party", "Defeat the Total Turtle in the waters west of Islaporto",
 		5, None, "Total Turtle", maps["Overworld"]),
-	(0, 0, "Broken RNG", "Defeat the Vile Vendor within the Vending Paradise",
+	(625306, 0, "Broken RNG", "Defeat the Vile Vendor within the Vending Paradise",
 		10, None, "Vile Vendor", maps["Vending Paradise Inside"]),
-	(0, 0, "Ethereal Eviction", "Defeat the ghost haunting hotel Nadir",
+	(625307, 0, "Ethereal Eviction", "Defeat the ghost haunting hotel Nadir",
 		10, None, "Nadir Ghost", maps["Nadir 13F"]),
-	(0, 0, "Freak: Matched", "Defeat Groween in the depths of Freak Island",
+	(625308, 0, "Freak: Matched", "Defeat Groween in the depths of Freak Island",
 		10, None, "Groween", maps["Groween"]),
-	(0, 0, "No Castles in Sight", "Defeat Cagliostro within the Dark Canal",
+	(625309, 0, "No Castles in Sight", "Defeat Cagliostro within the Dark Canal",
 		10, None, "Cagliostro", maps["Dark Canal 2F"]),
-	(0, 0, "Mon-Star See, Mon-Star Do", "Defeat the Sea Mon-Star in the valley near Moro Poco",
+	(625310, 0, "Mon-Star See, Mon-Star Do", "Defeat the Sea Mon-Star in the valley near Moro Poco",
 		5, None, "Sea Mon-Star", maps["Overworld"]),
-	(0, 0, "Safety Inspection Failed", "Defeat the Mimic Stairs in Moro Poco",
+	(625311, 0, "Safety Inspection Failed", "Defeat the Mimic Stairs in Moro Poco",
 		10, None, "Mimic Stairs", (maps["Moro Poco"], maps["Moro Poco 2F"])),
-	(0, 0, "Bullfrog in Boiling Water", "Defeat Bullfrog at Devil island",
+	(625312, 0, "Bullfrog in Boiling Water", "Defeat Bullfrog at Devil island",
 		10, None, "Bullfrog", maps["Devil Island"]),
-	(0, 0, "Don Your Goggles, Sandstorm Approaching", "Sense and defeat Sandy Dandy in the desert east of South Gate",
+	(625313, 0, "Don Your Goggles, Sandstorm Approaching", "Sense and defeat Sandy Dandy in the desert east of South Gate",
 		10, None, "Sandy Dandy", maps["Overworld"]),
-	(0, 0, "Save the Daedalus", "Defeat the Daedalus in the desert west of South Gate",
+	(625314, 0, "Save the Daedalus", "Defeat the Daedalus in the desert west of South Gate",
 		10, None, "Daedalus", maps["Overworld"]),
-	(0, 0, "When Dogs Fly", "Defeat the Hovering Dog in Rain Valley",
+	(625315, 0, "When Dogs Fly", "Defeat the Hovering Dog in Rain Valley",
 		10, None, "Hovering Dog", maps["Rain Valley"]),
-	(0, 0, "You Sunk My Dinosaur", "Defeat the Battleshipsaurus in Rain Valley",
+	(625316, 0, "You Sunk My Dinosaur", "Defeat the Battleshipsaurus in Rain Valley",
 		10, None, "Battleshipsaurus", maps["Rain Valley"]),
-	(0, 0, "Ted and Gone", "Defeat Ted Broiler within Bias City, completing your quest for vengeance",
+	(625317, 0, "Ted and Gone", "Defeat Ted Broiler within Bias City, completing your quest for vengeance",
 		25, AchievementType.PROGRESSION, "Ted Broiler", maps["Bias City B3F"]),
-	(0, 0, "Apex Predator", "Defeat the U-U-Shark at the Water Bypass",
+	(625318, 0, "Apex Predator", "Defeat the U-U-Shark at the Water Bypass",
 		50, AchievementType.MISSABLE, "U-U-Shark", maps["Water Bypass"]),
-	(0, 0, "Brand New Daedalus", "Defeat the EX-Daedalus in the desert west of Deathcruz",
+	(625319, 0, "Brand New Daedalus", "Defeat the EX-Daedalus in the desert west of Deathcruz",
 		50, None, "EX-Daedalus", maps["Overworld"]),
-	(0, 0, "Angry Mama", "Defeat the Mothershipsaurus and its gaggle of Battleshipsauri in Rain Valley",
+	(625320, 0, "Angry Mama", "Defeat the Mothershipsaurus and its gaggle of Battleshipsauri in Rain Valley",
 		50, None, "Mothershipsaurus", maps["Rain Valley"])
 ]
 for ach_id, badge, title, desc, points, ach_type, bounty_name, map_id in ach_bounties:
@@ -374,7 +427,7 @@ for ach_id, badge, title, desc, points, ach_type, bounty_name, map_id in ach_bou
 	ach_set.add_achievement(ach)
 
 # Pichi Pichi Bounty achievement requires quest completion as well
-ach_pichipichi = Achievement(id=0, badge=0, title="Pichi Pichi in the Ground", points=10, type=None,
+ach_pichipichi = Achievement(id=625378, badge=0, title="Pichi Pichi in the Ground", points=10, type=None,
 	description="Defeat the Pichi Pichi Brothers once and for all and return the stolen goods to Old Wolf in Hatoba")
 ach_pichipichi.add_core([
 	SAVE_PROTECTION,
@@ -393,11 +446,11 @@ ach_set.add_achievement(ach_pichipichi)
 
 ## Challenge Hunts
 ach_hunts = [ # ID, Badge, Title, Description Override, Points, Hunts Required
-	(0, 0, "Sprouting Challenger", 'Clear 10 Challenge Hunts, earning the title of "Challenger"', 5, 10),
-	(0, 0, "Budding Challenger", '', 5, 20),
-	(0, 0, "Flowering Challenger", '', 10, 30),
-	(0, 0, "Blooming Challenger", '', 10, 40),
-	(0, 0, "Evergreen Challenger", 'Clear all 56 Challenge Hunts', 25, 56)
+	(625321, 0, "Sprouting Challenger", 'Clear 10 Challenge Hunts, earning the title of "Challenger"', 5, 10),
+	(625322, 0, "Budding Challenger", '', 5, 20),
+	(625323, 0, "Flowering Challenger", '', 10, 30),
+	(625324, 0, "Blooming Challenger", '', 10, 40),
+	(625325, 0, "Evergreen Challenger", 'Clear all 56 Challenge Hunts', 25, 56)
 ]
 for ach_id, badge, title, desc, points, hunts_req in ach_hunts:
 	if not desc:
@@ -431,9 +484,9 @@ for ach_id, badge, title, desc, points, hunts_req in ach_hunts:
 
 ## Monster Database
 ach_database = [ # ID, Badge, Title, Description, Points, Type, Threshold
-	(0, 0, "Research Assistant", "25%", 5, None, 120),
-	(0, 0, "Adept Biographer", "50%", 10, None, 242),
-	(0, 0, "Comprehensive Taxonomist", "99%", 50, AchievementType.MISSABLE, 488)
+	(625326, 0, "Research Assistant", "25%", 5, None, 120),
+	(625327, 0, "Adept Biographer", "50%", 10, None, 242),
+	(625328, 0, "Comprehensive Taxonomist", "99%", 50, AchievementType.MISSABLE, 488)
 ]
 for ach_id, badge, title, desc, points, ach_type, threshold in ach_database:
 	ach = Achievement(id=ach_id, badge=badge, title=title, type=ach_type,
@@ -458,17 +511,17 @@ for ach_id, badge, title, desc, points, ach_type, threshold in ach_database:
 
 ## Character Recruits
 ach_chars = [ # ID, Badge, Title, Description, Points, Character, Maps
-	(0, 0, "El Niño Espionage", "Free Axel from captivity in El Niño, recruiting him to your party",
+	(625329, 0, "El Niño Espionage", "Free Axel from captivity in El Niño, recruiting him to your party",
 		4, "Axel", maps["El Nino"]),
-	(0, 0, "Pick of the Litter", "Find Pochi in the Dog Village, recruiting them to your party",
+	(625330, 0, "Pick of the Litter", "Find Pochi in the Dog Village, recruiting them to your party",
 		3, "Pochi", maps["Dog Village"]),
-	(0, 0, "You Only Live Thrice", "Rekindle Miska's undying spirit, recruiting her to your party",
+	(625331, 0, "You Only Live Thrice", "Rekindle Miska's undying spirit, recruiting her to your party",
 		4, "Miska", maps["Mado Mince's Lab"]),
-	(0, 0, "They Grow Up So Fast", "Grow a Money Eater, recruiting it into your party",
+	(625332, 0, "They Grow Up So Fast", "Grow a Money Eater, recruiting it into your party",
 		3, "Money Eater 1", (maps["Mado Garage"], maps["Bennett's House"], maps["Delta Rio Apartments 2F"])),
-	(0, 0, "Truly Ferocious", "Encounter and defeat the Demon Dog Licky in the plains of Nobotke, recruiting them to your party",
+	(625333, 0, "Truly Ferocious", "Encounter and defeat the Demon Dog Licky in the plains of Nobotke, recruiting them to your party",
 		4, "Licky", maps["Overworld"]),
-	(0, 0, "Tempting the Guardian", "Feed Hachi its favorite treat in Taisha, recruiting them to your party",
+	(625334, 0, "Tempting the Guardian", "Feed Hachi its favorite treat in Taisha, recruiting them to your party",
 		3, "Hachi", maps["Taisha"])
 ]
 for ach_id, badge, title, desc, points, char_name, map_id in ach_chars:
@@ -484,16 +537,16 @@ for ach_id, badge, title, desc, points, char_name, map_id in ach_chars:
 
 ## Class Levels
 ach_levels = [ # ID, Badge, Title, Points, Class, Index, Threshold
-	(0, 0, "Following in Maria's Footsteps", 3, "Any", -1, 20),
-	(0, 0, "Forging a New Path", 5, "Any", -1, 40),
-	(0, 0, "To the Ends of the Earth", 10, "Hunter", 0, 60),
-	(0, 0, "Vehicle Whisperer", 10, "Mechanic", 1, 60),
-	(0, 0, "Guns Blazing", 10, "Soldier", 2, 60),
-	(0, 0, "Nurturing Touch", 10, "Nurse", 3, 60),
-	(0, 0, "Who Grapples the Grapplers?", 10, "Wrestler", 4, 60),
-	(0, 0, "Flourishing Art Scene", 10, "Artist", 5, 60),
-	(0, 0, "Max's Best Friend", 10, "Dog", 6, 60),
-	(0, 0, "Paying Dividends", 10, "Money Eater", 7, 60)
+	(625335, 0, "Following in Maria's Footsteps", 3, "Any", -1, 20),
+	(625336, 0, "Forging a New Path", 5, "Any", -1, 40),
+	(625337, 0, "To the Ends of the Earth", 10, "Hunter", 0, 60),
+	(625338, 0, "Vehicle Whisperer", 10, "Mechanic", 1, 60),
+	(625339, 0, "Guns Blazing", 10, "Soldier", 2, 60),
+	(625340, 0, "Nurturing Touch", 10, "Nurse", 3, 60),
+	(625341, 0, "Who Grapples the Grapplers?", 10, "Wrestler", 4, 60),
+	(625342, 0, "Flourishing Art Scene", 10, "Artist", 5, 60),
+	(625343, 0, "Max's Best Friend", 10, "Dog", 6, 60),
+	(625344, 0, "Paying Dividends", 10, "Money Eater", 7, 60)
 ]
 for ach_id, badge, title, points, char_class, class_index, threshold in ach_levels:
 	ach = Achievement(id=ach_id, badge=badge, description="", title=title, points=points, type=None)
@@ -543,13 +596,13 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 # Grapplers on the bridge
 # Progression encounter in map without any other encounters, so we can just check if all enemies have died in an encounter
 bridge_logic = combat_logic(maps["Bay Bridge"], (0x13c, 0x13c, 0x12d, 0x12d))
-progression_bridge = Achievement(id=0, badge=0, title="Unpaid Tolls",
+progression_bridge = Achievement(id=625345, badge=0, title="Unpaid Tolls",
 	description="Clear the Grappler blockade on the bridge to Hatoba",
 	points=5, type=AchievementType.PROGRESSION)
 progression_bridge.add_core(bridge_logic)
 ach_set.add_achievement(progression_bridge)
 
-challenge_bridge = Achievement(id=0, badge=0, title="You and What Army?",
+challenge_bridge = Achievement(id=625346, badge=0, title="You and What Army?",
 	description="Defeat the Grapplers occupying the bridge with only a single party member",
 	points=5, type=AchievementType.MISSABLE)
 challenge_bridge.add_core(bridge_logic)
@@ -557,7 +610,7 @@ challenge_bridge.add_core(bridge_logic)
 challenge_bridge.add_core(mem.party[1] == value(0xff))
 ach_set.add_achievement(challenge_bridge)
 
-challenge_skunks = Achievement(id=0, badge=0, title="It'll Buff Out",
+challenge_skunks = Achievement(id=625347, badge=0, title="It'll Buff Out",
 	description="Defeat Skunks while all vehicles have at least 1 SP remaining",
 	points=10, type=AchievementType.MISSABLE)
 challenge_skunks.add_core([
@@ -571,7 +624,7 @@ challenge_skunks.add_core([
 ])
 ach_set.add_achievement(challenge_skunks)
 
-challenge_ushark = Achievement(id=0, badge=0, title="Feel the Lake Breeze",
+challenge_ushark = Achievement(id=625348, badge=0, title="Feel the Lake Breeze",
 	description="Defeat U-Shark with only the Harley and Sentry as your party's vehicles",
 	points=10, type=AchievementType.MISSABLE)
 challenge_ushark.add_core([
@@ -604,7 +657,7 @@ challenge_ushark.add_alt([
 ])
 ach_set.add_achievement(challenge_ushark)
 
-challenge_cagliostro = Achievement(id=0, badge=0, title="Trap Sprung",
+challenge_cagliostro = Achievement(id=625350, badge=0, title="Trap Sprung",
 	description="Defeat Cagliostro without ever having a party member inside a vehicle",
 	points=10, type=AchievementType.MISSABLE)
 challenge_cagliostro.add_core([
@@ -619,7 +672,7 @@ challenge_cagliostro.add_core([
 ])
 ach_set.add_achievement(challenge_cagliostro)
 
-challenge_bullfrog = Achievement(id=0, badge=0, title="Careful Dissection",
+challenge_bullfrog = Achievement(id=625351, badge=0, title="Careful Dissection",
 	description="Defeat Bullfrog without inflicting status effects on him or the Bull Crusher",
 	points=10, type=AchievementType.MISSABLE)
 challenge_bullfrog.add_core([
@@ -635,7 +688,23 @@ challenge_bullfrog.add_core([
 ])
 ach_set.add_achievement(challenge_bullfrog)
 
-challenge_ted = Achievement(id=0, badge=0, title="Searing Critique",
+challenge_fog = Achievement(id=0, badge=0, title="Cryptid Sighting",
+	description='During the quest "In the Fog", defeat the Huge Recon UFO and King Saurus in one session',
+	points=25, type=AchievementType.MISSABLE)
+challenge_fog.add_core([
+	reset_if(mem.current_map >= 0xfffe),
+	mem.current_map == maps["Mundane Ruins (Rain Valley)"],
+	IN_COMBAT,
+	and_next(mem.enemies[0]["ID"] == value(0x7)),
+	and_next(delta(mem.enemies[0]["HP"]) > value(0)),
+	(mem.enemies[0]["HP"] == value(0)).with_hits(1),
+	and_next(mem.enemies[0]["ID"] == value(0x165)),
+	and_next(delta(mem.enemies[0]["HP"]) > value(0)),
+	(mem.enemies[0]["HP"] == value(0)).with_hits(1),
+])
+ach_set.add_achievement(challenge_fog)
+
+challenge_ted = Achievement(id=625352, badge=0, title="Searing Critique",
 	description="Defeat Ted Broiler with two human party members having Artist as a class or subclass",
 	points=25, type=AchievementType.MISSABLE)
 challenge_ted.add_core([
@@ -651,13 +720,13 @@ for i in range(0, 3):
 challenge_ted.add_core(always_false().with_hits(2))
 ach_set.add_achievement(challenge_ted)
 
-progression_vlad = Achievement(id=0, badge=0, title="Vlad Vanquisher",
+progression_vlad = Achievement(id=625353, badge=0, title="Vlad Vanquisher",
 	description="Defeat Vlad, ridding the world of the Bias menace",
 	points=25, type=AchievementType.WIN_CONDITION)
 progression_vlad.add_core(combat_logic(maps["Bias City B7F (Final Boss)"], 0x173))
 ach_set.add_achievement(progression_vlad)
 
-challenge_vlad = Achievement(id=0, badge=0, title="No Camping Within City Limits",
+challenge_vlad = Achievement(id=625354, badge=0, title="No Camping Within City Limits",
 	description="Defeat all forms of Vlad in a single session without healing outside of combat",
 	points=25, type=AchievementType.MISSABLE)
 challenge_vlad.add_core(add_maps(maps["Bias City B7F (Final Boss)"]))
@@ -684,11 +753,11 @@ ach_set.add_achievement(challenge_vlad)
 
 ## Enemy Kills
 ach_kills = [ # ID, Badge, Title, Description, Points, Threshold, Title
-	(0, 0, "Why's Everyone So Hostile?", 'Defeat 1,000 enemies, earning the title of "Thousand Killer"',
+	(625355, 0, "Why's Everyone So Hostile?", 'Defeat 1,000 enemies, earning the title of "Thousand Killer"',
 		5, 1000, bit3(0x0019e75f)),
-	(0, 0, "Cycle of Violence", 'Defeat 5,555 enemies, earning the title of "5555 Kills Leader"',
+	(625356, 0, "Cycle of Violence", 'Defeat 5,555 enemies, earning the title of "5555 Kills Leader"',
 		10, 5555, bit1(0x0019e75f)),
-	(0, 0, "Maximum Carnage", 'Defeat 10,000 enemies, earning the title of "The Ace"',
+	(625357, 0, "Maximum Carnage", 'Defeat 10,000 enemies, earning the title of "The Ace"',
 		25, 10000, bit7(0x0019e760)),
 ]
 for ach_id, badge, title, desc, points, threshold, title_bit in ach_kills:
@@ -703,7 +772,7 @@ for ach_id, badge, title, desc, points, threshold, title_bit in ach_kills:
 	ach_set.add_achievement(ach)
 
 # Kills in one combat challenge
-challenge_kills = Achievement(id=0, badge=0, title="They Just Keep Coming",
+challenge_kills = Achievement(id=625358, badge=0, title="They Just Keep Coming",
 	description="Defeat 30 enemies in a single combat encounter", points=5)
 challenge_kills.add_core([
 	IN_COMBAT,
@@ -717,21 +786,21 @@ ach_set.add_achievement(challenge_kills)
 # For vehicles out in the field, there's no flags to indicate we've acquired them
 # There's memory addresses that get used when the screen to name a character or vehicle appears
 ach_vehicles = [ # ID, Badge, Title, Description, Points, Vehicle Index, Map, Extra Flags
-	(0, 0, "From Murder Weapons to Hospitals", "Complete a tour of the Vlad Museum, liberating the vehicle housed within",
+	(625359, 0, "From Murder Weapons to Hospitals", "Complete a tour of the Vlad Museum, liberating the vehicle housed within",
 		4, 4, maps["Vlad Museum B1F"], [(bit7(0x0019e9fc), True)]),
-	(0, 0, "Oh, That's Where I Parked It!", "Find the vehicle buried in the desert near Bar Thirsty",
+	(625360, 0, "Oh, That's Where I Parked It!", "Find the vehicle buried in the desert near Bar Thirsty",
 		3, 2, maps["Overworld"], [(bit0(0x0019e8a8), True)]),
-	(0, 0, "Public Transport", "Find the hidden bus stop near Nobotoke and wrangle a Wild Bus",
+	(625361, 0, "Public Transport", "Find the hidden bus stop near Nobotoke and wrangle a Wild Bus",
 		4, 3, maps["Overworld"], [(bit3(0x0019e8aa), True)]),
-	(0, 0, 'Cry "Havoc!" and Let Slip the God of War', "Steal the God of War from Taisha's shrine",
+	(625362, 0, 'Cry "Havoc!" and Let Slip the God of War', "Steal the God of War from Taisha's shrine",
 		3, 5, maps["Taisha Shrine"], [(bit1(0x0019e9d6), True)]),
-	(0, 0, "Metal for Nothing and Your Tanks for Free", "Create your very own tank with the help of Professor Bato",
+	(625363, 0, "Metal for Nothing and Your Tanks for Free", "Create your very own tank with the help of Professor Bato",
 		10, 8, maps["Bato Lab"], [(bit6(0x0019e75b), True)]),
-	(0, 0, "Always Wear a Helmet", "Find the vehicle stored within Helmets Island",
+	(625364, 0, "Always Wear a Helmet", "Find the vehicle stored within Helmets Island",
 		5, 7, maps["Helmets Island B2F Room 7"], None),
-	(0, 0, "One Way Out", "Find the vehicle deep within Deadend Cave",
+	(625365, 0, "One Way Out", "Find the vehicle deep within Deadend Cave",
 		5, 6, maps["Deadend Cave B5F"], [(bit2(0x0019ea13), True)]),
-	(0, 0, "Bury Me with My Tank", "Raise the vehicle out of the Buried Building, claiming it as your own",
+	(625366, 0, "Bury Me with My Tank", "Raise the vehicle out of the Buried Building, claiming it as your own",
 		5, 12, maps["Buried Building"], None)
 ]
 for ach_id, badge, title, desc, points, vehicle_index, map_id, flags in ach_vehicles:
@@ -753,6 +822,36 @@ for ach_id, badge, title, desc, points, vehicle_index, map_id, flags in ach_vehi
 
 	ach_set.add_achievement(ach)
 
+## World Map achievements
+ach_worldmaps = [ # ID, Badge, Title, Description, Points, Threshold
+	(0, 0, "Acclimation", "Fill in 25% of the overworld map", 3, 140),
+	(0, 0, "Exploration", "Fill in 50% of the overworld map", 5, 280),
+	(0, 0, "Subjugation", 'Fill in all of the overworld map, earning the title of "World Traveler"',
+		10, 560)
+]
+for ach_id, badge, title, desc, points, threshold in ach_worldmaps:
+	ach = Achievement(id=ach_id, badge=badge, title=f"Wasteland {title}", description=desc, points=points)
+	ach.add_core([
+		SAVE_PROTECTION,
+		pause_if((mem.map_base > value(0)) & (delta(mem.map_ptr) == value(0))),
+		pause_if((mem.map_base > value(0)) & (mem.map_ptr == value(0))),
+		pause_if(mem.map_base == value(0)),
+		pause_if(delta(mem.map_base) == value(0))
+	])
+
+	for i in range(0, 560):
+		ach.add_core(add_source(delta(mem.map_vals[i])))
+	ach.add_core(delta(mem.map_vals[560]) < value(threshold * 8))
+	for i in range(0, 560):
+		ach.add_core(add_source(mem.map_vals[i]))
+
+	logic = (mem.map_vals[560] >= value(threshold * 8))
+	if threshold == 560:
+		logic = (measured_percent(logic))
+	ach.add_core(logic)
+	
+	ach_set.add_achievement(ach)
+
 ## Misc achievements
 ach_igoggles = Achievement(id=625367, badge=0, title="From the Ashes",
 	description="Receive Maria's iGoggles, beginning your path of vengeance",
@@ -767,7 +866,7 @@ ach_igoggles.add_core([
 ])
 ach_set.add_achievement(ach_igoggles)
 
-ach_pocketmoney = Achievement(id=0, badge=0, title="Don't Spend It All at Once",
+ach_pocketmoney = Achievement(id=625368, badge=0, title="Don't Spend It All at Once",
 	description="Receive a reward from Karu for gifting him enough pocket money",
 	points=1, type=AchievementType.MISSABLE)
 ach_pocketmoney.add_core([
@@ -778,7 +877,7 @@ ach_pocketmoney.add_core([
 ])
 ach_set.add_achievement(ach_pocketmoney)
 
-ach_dogs = Achievement(id=0, badge=0, title="Free to a Good Home",
+ach_dogs = Achievement(id=625369, badge=0, title="Free to a Good Home",
 	description="Bring all of the dogs from Dog Village to the old man in the greenhouse in Mado",
 	points=2, type=AchievementType.MISSABLE)
 ach_dogs.add_core([
@@ -796,7 +895,35 @@ ach_dogs.add_core([
 ])
 ach_set.add_achievement(ach_dogs)
 
-ach_vending = Achievement(id=0, badge=0, title="Your Lucky Day",
+ach_modders = Achievement(id=0, badge=0, title="Pit Crew",
+	description="Send every vehicle specialist to Nile's Garage in Mado",
+	points=5, type=None)
+ach_modders.add_core([
+	SAVE_PROTECTION,
+	partial_bitcount(0x0019e9d7, range(0, 3), is_delta=True),
+	partial_bitcount(0x0019e9d8, range(5, 8), is_delta=True, count=5),
+	partial_bitcount(0x0019e9d7, range(0, 3)),
+	partial_bitcount(0x0019e9d8, range(5, 8), count=6, measured=Measured.MEASURED),
+])
+ach_set.add_achievement(ach_modders)
+
+ach_dogsystem = Achievement(id=0, badge=0, title="Every Dog Has Its System",
+	description="Register every location into the Dog System for use as fast travel",
+	points=5, type=None)
+ach_dogsystem.add_core([
+	SAVE_PROTECTION,
+	partial_bitcount(0x0019e90d, range(0, 3), is_delta=True),
+	add_source(delta(bitcount(0x0019e90e))),
+	add_source(delta(bitcount(0x0019e90f))),
+	partial_bitcount(0x0019e910, [6, 7], is_delta=True, count=20),
+	partial_bitcount(0x0019e90d, range(0, 3)),
+	add_source(bitcount(0x0019e90e)),
+	add_source(bitcount(0x0019e90f)),
+	partial_bitcount(0x0019e910, [6, 7], count=21, measured=Measured.MEASURED),
+])
+ach_set.add_achievement(ach_dogsystem)
+
+ach_vending = Achievement(id=625370, badge=0, title="Your Lucky Day",
 	description="Win a prize from a vending machine", points=3, type=None)
 ach_vending.add_core([
 	SAVE_PROTECTION,
@@ -808,7 +935,19 @@ ach_vending.add_core([
 ])
 ach_set.add_achievement(ach_vending)
 
-ach_ribbitrace = Achievement(id=0, badge=0, title="Froggy Derby",
+ach_noguchi = Achievement(id=0, badge=0, title="Not a Placebo",
+	description="Take a sample from the production line at Noguchi Chemicals",
+	points=2, type=None)
+ach_noguchi.add_core([
+	SAVE_PROTECTION,
+	mem.current_map == maps["Noguchi B1F"],
+	bit5(0x0019e9e0) == value(1),
+	delta(bit5(0x0019e9a3)) == value(1),
+	bit5(0x0019e9a3) == value(0)
+])
+ach_set.add_achievement(ach_noguchi)
+
+ach_ribbitrace = Achievement(id=625371, badge=0, title="Froggy Derby",
 	description="Place a winning bet on a pair of frogs with odds of 5 or higher",
 	points=5, type=None)
 ach_ribbitrace.add_core([
@@ -823,17 +962,17 @@ ach_ribbitrace.add_core([
 ach_set.add_achievement(ach_ribbitrace)
 
 # No flag for beating them while tending the shop, so we have to detect them being defeated in combat
-ach_pichistore = Achievement(id=0, badge=0,	points=3, type=AchievementType.MISSABLE,
+ach_pichistore = Achievement(id=625372, badge=0, points=3, type=AchievementType.MISSABLE,
 	title="Pichi Pichi on the Job", description="Defeat the Pichi Pichi Brothers while tending the ill trader's shop")
 ach_pichistore.add_core(combat_logic(maps["Trader Camp (Shopkeep) Left Tent"], (0x15e, 0x15d)))
 ach_set.add_achievement(ach_pichistore)
 
-ach_garcia = Achievement(id=0, badge=0, title="Unrequited Animosity",
+ach_garcia = Achievement(id=625373, badge=0, title="Unrequited Animosity",
 	description="Defeat Garcia in a duel atop of Swan", points=10, type=None)
 ach_garcia.add_core(combat_logic(maps["Swan Outside"], 0x136))
 ach_set.add_achievement(ach_garcia)
 
-ach_marriage = Achievement(id=0, badge=0, title="Someone Else to Live For", points=1, type=None,
+ach_marriage = Achievement(id=625374, badge=0, title="Someone Else to Live For", points=1, type=None,
 	description="Marry and settle down, moving on from your quest for vengeance")
 ach_marriage.add_core(SAVE_PROTECTION)
 ach_marriage.add_core(add_maps((maps["Mado Garage"], maps["Bennett's House"], maps["Islaporto Sewers"])))

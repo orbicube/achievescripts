@@ -4,20 +4,50 @@ rp = RichPresence()
 
 rp.add_lookup("Map", {
 	0x0: "Overworld",
-	range(0x6, 0x17): "Mado",
-	range(0x1a, 0x27): "El Niño",
-	range(0x28, 0x34): "Hatoba",
-	range(0x35, 0x3b): "Bazaarska",
-	range(0x3c, 0x47): "Azusa",
-	range(0x48, 0x64): "Delta Rio"
+	range(0x6, 0x18): "Mado",
+	range(0x1a, 0x28): "El Niño",
+	range(0x28, 0x35): "Hatoba",
+	range(0x35, 0x3c): "Bazaarska",
+	range(0x3c, 0x48): "Azusa",
+	range(0x48, 0x65): "Delta Rio",
+	range(0x65, 0x79): "Islaporto",
 	range(0x79, 0x7d): "Swan",
-	range(0x8f, 0x96): "Deathcruz",
-	range(0x97, 0x99): "Melt-town",
-	range(0x115, 0x120): "Grappler Tower",
-	range(0x147, 0x161): "Bias City",
-	range(0x182, 0x187): "Eternal Gate",
-	range(0x188, 0x18d): "Trader Camp",
-	0x1a2: "Abandoned Camp"
+	range(0x7e, 0x8a): "Taisha",
+	range(0x8b, 0x8f): "Moro Poco",
+	range(0x8f, 0x97): "Deathcruz",
+	range(0x97, 0x9a): "Melt-town",
+	0x9a: "Rain Valley",
+	[0x9c, 0x9d]: "Nameless Bar",
+	range(0x9e, 0xa1): "Bay Bridge",
+	range(0xa1, 0xa4): "Dog Village"
+	range(0xa5, 0xa8): "Forest Watchtower",
+	[0xad, 0xae]: "Bar Thirsty",
+	range(0xc2, 0xc5): "Staff Housing",
+	[0xd0, 0xd1]: "Bato Lab",
+	range(0xe0, 0xef): "Helmets Island",
+	range(0xef, 0xf8): "Buried Building",
+	[0xf8, 0xf9]: "Bennett's House",
+	0xfa: "Hoc's Trading Site",
+	[0xfb, 0xfc]: "Villain Museum",
+	[0x105, 0x106]: "Vending Paradise"
+	[0x107, 0x108]: "Sewer Management",
+	range(0x109, 0x10d): "Giant Ant Cave",
+	range(0x10d, 0x114): "Vlad Museum",
+	range(0x114, 0x121): "Grappler Tower",
+	range(0x121, 0x125): "Protein Palace",
+	range(0x126, 0x12d): "Dark Canal",
+	range(0x12e, 0x134): "Wind Farm",
+	0x134: "Deathcruz",
+	range(0x135, 0x140): "Deadend Cave",
+	range(0x13a, 0x146): "Devil Island"
+	0x146: "Melt-town"
+	range(0x147, 0x162): "Bias City",
+	range(0x167, 0x176): "Hotel Nadir",
+	range(0x177, 0x182): "Freak Island",
+	range(0x182, 0x188): "Eternal Gate",
+	[0x1ae, 0x1af]: "Witch's Tent"
+	#range(0x188, 0x1a3): "Trader Camp",
+	#0x1a2: "Abandoned Camp"
 })
 
 rp.add_lookup("Job", {
@@ -64,7 +94,7 @@ def party_info(party_size):
 
 	return ", ".join(chars)
 
-rp.add_display([mem_map == 0xfffe], "On the Title Screen")
+rp.add_display([mem_map >= 0xfffe], "On the Title Screen")
 
 for i in range(1,4):
 	rp.add_display([mem_party[i] == 0xff, mem_ngp > 0], f"NG+@Number({mem_ngp})@Difficulty({mem_diff}) | 🗺️@Map({mem_map}) | {party_info(i)}")

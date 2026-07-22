@@ -41,8 +41,11 @@ class Memory:
 
 	pocket_money = byte(0x0019ea2b)
 
+	map_base = tbyte(0x0019d2dc)
+	map_ptr = map_base >> tbyte(0x10)
+
 	vending_base = tbyte(0x00129690) >> tbyte(0x24) >> tbyte(0x2d0) >> tbyte(0x44)
-	vending_spin = vending_base >> word(0x230)
+	vending_spin = vending_base >> dword(0x230)
 	vending_win = vending_base >> tbyte(0x234)
 
 	frog_base = tbyte(0x0012d66c) >> tbyte(0x06c) >> tbyte(0x0c) >> tbyte(0x170)
@@ -117,3 +120,7 @@ class Memory:
 			self.bounties[bounty_names[bounty_county]] = bit3(i)
 
 			bounty_county += 1
+
+		self.map_vals = []
+		for i in range(0, 561):
+			self.map_vals.append(self.map_base >> bitcount(0x2b0 + i))
