@@ -156,6 +156,18 @@ def combat_logic(map_ids: tuple|int, enemies: tuple|int):
 
 	return logic
 
+class Region(Enum):
+	EN = 0x73657551
+	JP = 0x2f651c11
+
+def dialogue_logic(dialogue_pre: int, dialogue_post: int, region: Region):
+	logic = [
+		mem.region == value(region.value),
+		delta(mem.dialogue) == dialogue_pre,
+		mem.dialogue == dialogue_post
+	]
+	return logic
+
 ## Constants
 IN_COMBAT = (mem.game_state == value(2))
 # Not strictly needed, save data is loaded while on main menu
@@ -166,7 +178,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(625233, 0, "Surveying the Damage", "Clear away the rubble of Mado's destroyed buildings, paving the way for new structures",
 		1, None, bit0(0x0019e91a), maps["Mado"], None),
 	(625234, 0, "Ol' Reliable", "Receive a repaired vehicle from Nile at the Mado Garage",
-		2, None, bit2(0x0019e91a), maps["Mado Garage"], None),
+		2, None, bit2(0x0019e91a), maps["Mado Garage"], None),	
 	(625235, 0, "Early Check Out", "Rescue Khatia from the Grapplers running the El Niño Inn",
 		3, None, bit1(0x0019e952), maps["El Nino Inn"], None),
 	(625236, 0, "Neither Toothless nor Gutless", "Become a member of the Mindless, gaining access to party member recruitment",
@@ -352,6 +364,19 @@ ach_cannon.add_alt([
 	mem.current_map == maps["Caterpillar Villa"],
 	delta(bit1(0x0019e942)) == value(0)
 ])
+
+ach_allie = Achievement(id=625644, badge=0, title="Reunited Lovers",
+	description="Listen to Allie and Hunt discuss their future in Hatoba",
+	points=2, type=AchievementType.MISSABLE)
+ach_allie.add_core([
+	SAVE_PROTECTION,
+	mem.current_map == maps["Hatoba"],
+	bit1(0x0019e927) == value(1),
+	bit3(0x0019e9ea) == value(0),
+])
+ach_allie.add_alt(dialogue_logic(0x26f8, 0x26fa, Region.EN))
+ach_allie.add_alt(dialogue_logic(0x16d8, 0x16da, Region.JP))
+ach_set.add_achievement(ach_allie)
 
 ## Enemy Bounties
 bounty_types = []
@@ -876,22 +901,23 @@ ach_igoggles = Achievement(id=625367, badge=0, title="From the Ashes",
 ach_igoggles.add_core([
 	SAVE_PROTECTION,
 	mem.current_map == maps["Mado"],
-	delta(mem.inventory["Tools"][0][0]) == 0,
-	mem.inventory["Tools"][0][0] == 0x05b,
-	delta(mem.inventory["Tools"][0][1]) == 0,
-	mem.inventory["Tools"][0][1] == 1
+	delta(mem.inventory["Tools"][0]["ID"]) == 0,
+	mem.inventory["Tools"][0]["ID"] == 0x05b,
+	delta(mem.inventory["Tools"][0]["Amount"]) == 0,
+	mem.inventory["Tools"][0]["Amount"] == 1
 ])
 ach_set.add_achievement(ach_igoggles)
 
 ach_pocketmoney = Achievement(id=625368, badge=0, title="Don't Spend It All at Once",
-	description="Receive a reward from Karu for gifting him enough pocket money",
-	points=1, type=AchievementType.MISSABLE)
+	description="Receive a reward from Karu for gifting him pocket money",
+	points=1, type=None)
 ach_pocketmoney.add_core([
 	SAVE_PROTECTION,
 	mem.current_map == maps["Mado Garage"],
-	delta(mem.pocket_money) > 28,
-	mem.pocket_money < 2
+	mem.movable == value(1)
 ])
+ach_pocketmoney.add_alt(dialogue_logic(0x4b7c, 0x4be4, Region.EN))
+ach_pocketmoney.add_alt(dialogue_logic(0x2e4a, 0x2e84, Region.JP))
 ach_set.add_achievement(ach_pocketmoney)
 
 ach_dogs = Achievement(id=625369, badge=0, title="Free to a Good Home",
@@ -1000,11 +1026,37 @@ ach_ribbitrace.add_core([
 	mem.game_state == value(2),
 	delta(mem.frog_state) == value(5),
 	mem.frog_state == value(6),
-	remember(mem.frog_bet),
+	remember(mem.frog_bet_cost),
+	mem.frog_bet_value == recall(),
 	remember(recall() * value(5)),
 	mem.frog_payout >= recall()
 ])
 ach_set.add_achievement(ach_ribbitrace)
+
+# Cumulative minigame winnings get calculated on exiting a minigame
+# To properly measure it in the toolkit, we have to use different values depending on the miigame
+ach_minigames = Achievement(id=625609, badge=0, title="Rigged in Your Favour", points=5, type=None,
+	 description='Earn 10,000G from mini-games, earning the title of "Wasteland Gambler"')
+ach_minigames.add_core([
+	SAVE_PROTECTION,
+	mem.game_state == value(2)
+])
+# Ribbit Race
+ach_minigames.add_alt([
+	pause_if((mem.frog_state == value(0)) | (mem.frog_state > value(10))),
+	remember(mem.winnings / value(2)),
+	remember(delta(mem.frog_winnings) + recall()),
+	recall() < value(10000),
+	remember(mem.winnings / value(2)),
+	remember(mem.frog_winnings + recall()),
+	measured(recall() >= value(10000))
+])
+# Bang Bang Tanks
+# Slots
+#ach_minigames.add_alt([
+#
+#])
+ach_set.add_achievement(ach_minigames)
 
 # No flag for beating them while tending the shop, so we have to detect them being defeated in combat
 ach_pichistore = Achievement(id=625372, badge=0, points=3, type=AchievementType.MISSABLE,

@@ -3,6 +3,8 @@ from pycheevos.models.generic import GameObject
 
 class Memory:
 
+	region = dword(0x10)
+
 	game_state = dword(0x00119750)
 	current_map = dword(0x00119740)
 	party = [
@@ -35,11 +37,15 @@ class Memory:
 		"Vending Win": 0x144
 	}
 
+	movable = dword(0x001295c4)
+	dialogue = tbyte(0x001910d4) >> dword(0xb0)
+
 	naming_type = word(0x0019ca9c)
 	naming_char = word(0x0019ca9e)
 	naming_vehicle = word(0x0019caa0)
 
-	pocket_money = byte(0x0019ea2b)
+	money = dword(0x001947d8)
+	pocket_money = word_be(0x0019ea2b)
 
 	map_base = tbyte(0x0019d2dc)
 	map_ptr = map_base >> tbyte(0x10)
@@ -49,12 +55,16 @@ class Memory:
 	vending_win = vending_base >> dword(0x234)
 
 	frog_base = tbyte(0x0012d66c) >> tbyte(0x06c) >> tbyte(0x0c) >> tbyte(0x170)
-	frog_state = frog_base >> tbyte(0x20)
-	frog_bet = frog_base >> tbyte(0x24)
-	frog_payout = frog_base >> tbyte(0x16c)
+	frog_state = frog_base >> word(0x20)
+	frog_bet_cost = frog_base >> dword(0x24)
+	frog_bet_value = frog_base >> dword(0x1e4)
+	frog_payout = frog_base >> dword(0x16c)
+	frog_winnings = frog_base >> dword(0x22c)
 
 	detector_count = byte(0x0019e82c)
 	shell_count = byte(0x0019e82d)
+
+	winnings = word_be(0x0019e830)
 
 	def __init__(self):
 		self.chars = {}
@@ -127,3 +137,26 @@ class Memory:
 		self.map_vals = []
 		for i in range(0, 560):
 			self.map_vals.append(self.map_base >> bitcount(0x2b0 + i))
+
+		self.inventory = {
+			"Tools": [],
+			"Medicine": [],
+			"Battle": [],
+			"Equipment": []
+		}
+		for i in range(0x00194a3c, 0x00194a93, 2):
+			self.inventory["Battle"].append(
+				{"ID": byte(i), "Amount": byte(i+1)}
+			)
+		for i in range(0x0019491c, 0x00194951, 2):
+			self.inventory["Medicine"].append(
+				{"ID": byte(i), "Amount": byte(i+1)}
+			)
+		for i in range(0x00194c78, 0x00194ff0, 4):
+			self.inventory["Tools"].append(
+				{"ID": word(i), "Amount": word(i+2)}
+			)
+		for i in range(0x00194ff0, 0x001955c1, 4):
+			self.inventory["Equipment"].append(
+				{"ID": word(i), "Amount": word(i+2)}
+			)
