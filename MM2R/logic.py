@@ -893,6 +893,74 @@ for ach_id, badge, title, desc, points, threshold in ach_worldmaps:
 	ach_set.add_achievement(ach)
 
 
+############
+# Minigames
+# Cumulative minigame winnings get calculated on exiting a minigame
+# To properly measure it in the toolkit, we have to use different values depending on the miigame
+ach_minigames = Achievement(id=625609, badge=0, title="Rigged in Your Favour", points=5, type=None,
+	 description='Win 10,000G from minigames, earning the title of "Wasteland Gambler"')
+ach_minigames.add_core([
+	SAVE_PROTECTION
+])
+# Ribbit Race
+ach_minigames.add_alt([
+	pause_if(~mem.frog.active()),
+	remember(mem.winnings / value(2)),
+	remember(delta(mem.frog.winnings) + recall()),
+	recall() < value(10000),
+	remember(mem.winnings / value(2)),
+	remember(mem.frog.winnings + recall()),
+	measured(recall() >= value(10000))
+])
+# Bang Bang Tanks
+ach_minigames.add_alt([
+	pause_if(~mem.tanks.active()),
+	remember(mem.winnings / value(2)),
+	remember(delta(mem.tanks.winnings) + recall()),
+	recall() < value(10000),
+	remember(mem.winnings / value(2)),
+	remember(mem.tanks.winnings + recall()),
+	measured(recall() >= value(10000))
+])
+# Slots
+ach_minigames.add_alt([
+	pause_if(~mem.slots.active()),
+	remember(mem.winnings / value(2)),
+	remember(delta(mem.slots.winnings) + recall()),
+	recall() < value(10000),
+	remember(mem.winnings / value(2)),
+	remember(mem.slots.winnings + recall()),
+	measured(recall() >= value(10000))
+])
+ach_set.add_achievement(ach_minigames)
+
+ach_tanks_score = Achievement(id=625901, badge=0, title="Pro Wargamer",
+	description="Obtain a score of 1000 or higher in Bang Bang Tanks! Reloaded",
+	points=5, type=None)
+ach_tanks_score.add_core([
+	mem.game_state == value(2),
+	mem.tanks.active == value(1),
+	delta(mem.tanks.state) == value(1),
+	mem.tanks.state == value(0),
+	remember(mem.tanks.score & value(0x80000000)),
+	recall() == value(0),
+	mem.tanks.score >= value(800)
+])
+ach_set.add_achievement(ach_tanks_score)
+
+ach_tanks_combo = Achievement(id=625902, badge=0, title="Sharpshooter Supreme",
+	description="Reach a combo of 25 hits in Bang Bang Tanks! Reloaded",
+	points=5, type=None)
+ach_tanks_combo.add_core([
+	mem.game_state == value(2),
+	mem.tanks.active == value(1),
+	mem.tanks.state == value(1),
+	delta(mem.tanks.combo) < value(25),
+	mem.tanks.combo >= value(25)
+])
+ach_set.add_achievement(ach_tanks_combo)
+
+
 ###########
 ## Misc
 ach_igoggles = Achievement(id=625367, badge=0, title="From the Ashes",
@@ -971,10 +1039,10 @@ ach_vending = Achievement(id=625370, badge=0, title="Your Lucky Day",
 ach_vending.add_core([
 	SAVE_PROTECTION,
 	mem.game_state == value(2),
-	prior(mem.vending_spin) == value(1),
-	mem.vending_spin == value(0),
-	delta(mem.vending_win) == value(0),
-	mem.vending_win == value(1)
+	prior(mem.vending.spin) == value(1),
+	mem.vending.spin == value(0),
+	delta(mem.vending.win) == value(0),
+	mem.vending.win == value(1)
 ])
 ach_set.add_achievement(ach_vending)
 
@@ -1037,39 +1105,14 @@ ach_ribbitrace = Achievement(id=625371, badge=0, title="Froggy Derby",
 ach_ribbitrace.add_core([
 	SAVE_PROTECTION,
 	mem.game_state == value(2),
-	delta(mem.frog_state) == value(5),
-	mem.frog_state == value(6),
-	remember(mem.frog_bet_cost),
-	mem.frog_bet_value == recall(),
+	delta(mem.frog.state) == value(5),
+	mem.frog.state == value(6),
+	remember(mem.frog.bet_cost),
+	mem.frog.bet_value == recall(),
 	remember(recall() * value(5)),
-	mem.frog_payout >= recall()
+	mem.frog.payout >= recall()
 ])
 ach_set.add_achievement(ach_ribbitrace)
-
-# Cumulative minigame winnings get calculated on exiting a minigame
-# To properly measure it in the toolkit, we have to use different values depending on the miigame
-ach_minigames = Achievement(id=625609, badge=0, title="Rigged in Your Favour", points=5, type=None,
-	 description='Earn 10,000G from mini-games, earning the title of "Wasteland Gambler"')
-ach_minigames.add_core([
-	SAVE_PROTECTION,
-	mem.game_state == value(2)
-])
-# Ribbit Race
-ach_minigames.add_alt([
-	pause_if((mem.frog_state == value(0)) | (mem.frog_state > value(10))),
-	remember(mem.winnings / value(2)),
-	remember(delta(mem.frog_winnings) + recall()),
-	recall() < value(10000),
-	remember(mem.winnings / value(2)),
-	remember(mem.frog_winnings + recall()),
-	measured(recall() >= value(10000))
-])
-# Bang Bang Tanks
-# Slots
-#ach_minigames.add_alt([
-#
-#])
-ach_set.add_achievement(ach_minigames)
 
 # No flag for beating them while tending the shop, so we have to detect them being defeated in combat
 ach_pichistore = Achievement(id=625372, badge=0, points=3, type=AchievementType.MISSABLE,

@@ -102,16 +102,25 @@ def party_info(party_size):
 
 	return ", ".join(chars)
 
-rp.add_display([mem_map >= 0xfffe], "On the Title Screen")
+rp.add_display([mem.current_map >= 0xfffe], "On the Title Screen")
 
-rp.add_display([mem.game_state == 2, mem.frog_state > 0, mem.frog_state < 11], f"Playing Ribbit Race in @Map({mem.current_map})")
+rp.add_display([mem.game_state == 2, mem.frog.active()],
+	f"Playing Ribbit Race in @Map({mem.current_map})")
+rp.add_display([mem.game_state == 3, mem.slots.active()],
+	f"Playing Slots in @Map({mem.current_map})")
+rp.add_display([mem.game_state == 2, mem.tanks.active == 1],
+	f"Playing Bang Bang Tanks! in @Map({mem.current_map})")
 
 for i in range(1,4):
-	rp.add_display([mem.party[i] == 0xff, mem.ngplus_count > 0], f"NG+@Number({mem.ngplus_count})@Difficulty({mem.difficulty}) | @Map({mem.current_map}) | {party_info(i)}")
-	rp.add_display([mem.party[i] == 0xff], f"@Map({mem.current_map}) | {party_info(i)}")
+	rp.add_display([mem.party[i] == 0xff, mem.ngplus_count > 0],
+		f"NG+@Number({mem.ngplus_count})@Difficulty({mem.difficulty}) | @Map({mem.current_map}) | {party_info(i)}")
+	rp.add_display([mem.party[i] == 0xff],
+		f"@Map({mem.current_map}) | {party_info(i)}")
 
-rp.add_display([mem_map < 0xfffe], f"@Map({mem.current_map}) | {party_info(4)}")
+rp.add_display([mem.current_map < 0xfffe, mem.ngplus_count > 0], f"@Map({mem.current_map}) | {party_info(4)}")
+rp.add_display([mem.current_map < 0xfffe], f"@Map({mem.current_map}) | {party_info(4)}")
 
 rp.add_display([], "Crawling the wastes")
 
-rp.save(game_id=24022, title="MM2R RP", path="D:\\Games\\Emulation\\Emulators\\RALibertro\\RACache\\Data")
+rp.save(game_id=24022, title="MM2R RP",
+	path="D:\\Games\\Emulation\\Emulators\\RALibertro\\RACache\\Data")

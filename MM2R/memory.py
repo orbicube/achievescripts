@@ -1,10 +1,11 @@
 from pycheevos.core.helpers import *
+from pycheevos.models.generic import GameObject
+
+game_state = dword(0x00119750)
+region = dword(0x10)
 
 class Memory:
 
-	region = dword(0x10)
-
-	game_state = dword(0x00119750)
 	current_map = dword(0x00119740)
 	party = [
 		byte(0x00194882),
@@ -32,9 +33,7 @@ class Memory:
 		"Character": 0xc4,
 		"Subclass": 0x7d,
 		"Vehicle": 0x25c,
-		"SP": 0x10,
-		"Vending Spin": 0x140,
-		"Vending Win": 0x144
+		"SP": 0x10
 	}
 
 	movable = dword(0x001295c4)
@@ -50,16 +49,6 @@ class Memory:
 	map_base = tbyte(0x0019d2dc)
 	map_ptr = map_base >> tbyte(0x10)
 
-	vending_base = tbyte(0x00129690) >> tbyte(0x24) >> tbyte(0x2d0) >> tbyte(0x44)
-	vending_spin = vending_base >> dword(0x230)
-	vending_win = vending_base >> dword(0x234)
-
-	frog_base = tbyte(0x0012d66c) >> tbyte(0x06c) >> tbyte(0x0c) >> tbyte(0x170)
-	frog_state = frog_base >> word(0x20)
-	frog_bet_cost = frog_base >> dword(0x24)
-	frog_bet_value = frog_base >> dword(0x1e4)
-	frog_payout = frog_base >> dword(0x16c)
-	frog_winnings = frog_base >> dword(0x22c)
 
 	detector_count = byte(0x0019e82c)
 	shell_count = byte(0x0019e82d)
@@ -67,6 +56,9 @@ class Memory:
 	winnings = word_be(0x0019e830)
 
 	def __init__(self):
+		self.region = region
+		self.game_state = game_state
+
 		self.chars = {}
 		char_names = ["Player", "Axel", "Miska", "Clint", "Atena", "Sara",
 			"Flor", "Hans", "Pablo", "Pochi", "Licky", "Hachi",
@@ -97,10 +89,6 @@ class Memory:
 
 			self.chars[char_names[char_index]] = char_dict
 			char_index += 1
-
-		self.inventory = {"Tools": [], "Equipment": []}
-		for i in range(0x00194c78, 0x00194ff0, 4):
-			self.inventory["Tools"].append((word(i), word(i+2)))
 
 		self.enemies = []
 		for i in range(0x001ab5cc, 0x001abc69, 188):
@@ -160,3 +148,62 @@ class Memory:
 			self.inventory["Equipment"].append(
 				{"ID": word(i), "Amount": word(i+2)}
 			)
+
+		self.frog = Frog(tbyte(0x0012d66c))
+		self.tanks = Tanks(tbyte(0x00278f30))
+		self.slots = Slots(tbyte(0x0027782c))
+		self.vending = Vending(tbyte(0x00129690))
+
+
+class Frog(GameObject):
+	def __init__(self, address):
+		super().__init__(
+			address >> tbyte(0x06c) >> tbyte(0x0c) >> tbyte(0x170))
+
+		self.state = self.offset(0x20, word)
+		self.bet_cost = self.offset(0x24, dword)
+		self.bet_value = self.offset(0x1e4, dword)
+		self.payout = self.offset(0x16c, dword)
+		self.winnings = self.offset(0x22c, dword)
+
+	def active(self):
+		return game_state == 2 and self.state > 0 and self.state < 11
+
+
+class Tanks(GameObject):
+	def __init__(self, address):
+		super().__init__(address)
+
+		self.active = self.offset(0x2c, dword)
+		self.winnings = self.offset(0xc0, dword)
+		self.combo = word(0x00278f0c)
+		self.movable = dword(0x00278f20)
+		self.state = dword(0x00278f28)
+		self.score = dword(0x00278f5c)
+
+	def active(self):
+		return game_state == 2 and self.active == 1
+
+class Slots(GameObject):
+	def __init__(self, address):
+		super().__init__(address >> tbyte(0))
+
+		self.active_ptr = self.offset(0, tbyte)
+		self.winnings = dword(0x00277828)
+
+	def active(self):
+		return game_state == 3 and self.active_ptr == 0x1aa5c4
+
+
+class Vending(GameObject):
+	def __init__(self, address):
+		super().__init__(
+			address >> tbyte(0x24) >> tbyte(0x2d0) >> tbyte(0x44))
+
+		self.items = [self.offset(i, dword) for i in range(0x20, 0xb1, 0x30)]
+
+		self.spin = self.offset(0x230, dword)
+		self.win = self.offset(0x234, dword)
+
+	def active(self):
+		return items[0] > 0
