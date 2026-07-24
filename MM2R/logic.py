@@ -13,7 +13,7 @@ mem = Memory()
 
 import json
 #	Converts a simple non-pointer code note into a dict with descriptions as keys
-#	Notes should be formatted as Description\r\n\0xAddress1 = Key1\r\n0xAddress2 = Key2
+#	Notes should be formatted as Description\r\n\0xValue1 = Key1\r\n0xValue2 = Key2
 #	If duplicate keys, addresses will be in a List
 def note2dict(notefile: str, addr: str):
 	with open(notefile) as data_file:
@@ -42,6 +42,7 @@ def note2dict(notefile: str, addr: str):
 	return note_dict
 maps = note2dict("D:\\Games\\Emulation\\Emulators\\RALibertro\\RACache\\Data\\24022-Notes.json", "0x119740")
 
+###################
 ## Helper functions
 class Operator(Enum):
 	EQUAL = 0
@@ -132,7 +133,6 @@ def vehicle_stat(party_index: int, offset: int):
 	return mem.party_vehicles[party_index] * mem.offsets["Vehicle"] >> byte(mem.vehicle_base + offset)
 
 def combat_logic(map_ids: tuple|int, enemies: tuple|int):
-	
 	logic = [IN_COMBAT]
 	logic.extend(add_maps(map_ids))
 
@@ -202,7 +202,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(625245, 0, "Them!", "Rescue Moriniu from Adam Ant's captivity after he gets abducted collecting wood for Mado's new building",
 		3, AchievementType.MISSABLE, bit7(0x0019e922), maps["Forest Watchtower"], None),
 	(625246, 0, "Improvised Explosive Dandelion", "Bring Sakae at the Trader Camp north of Hatoba his Bombdelion Fluff, receiving a supply of explosives",
-		3, None, bit3(0x0019e946), maps["Trader Camp Tent (Bombdelion)"], None),
+		3, None, bit3(0x0019e946), maps["Trader Camp (Bombdelion) Tent"], None),
 	(625247, 0, "Towards Sanctuary", "Escort the traders safely from Hatoba to Azusa",
 		3, None, bit2(0x0019e931), maps["Azusa Bottom"], None),
 	(625248, 0, "Can't Run, Can't Hide", "Hunt down the Greater Manta using Zushio's Signal Bullet technology",
@@ -989,6 +989,19 @@ ach_noguchi.add_core([
 	bit5(0x0019e9a3) == value(0)
 ])
 ach_set.add_achievement(ach_noguchi)
+
+ach_lovemachine = Achievement(id=625860, badge=0, title="Peace, LOVE, Unity, Respect",
+	description="Register all ICs into the LOVE Machine", points=10, type=None)
+ach_lovemachine.add_core([
+	SAVE_PROTECTION,
+	mem.current_map == maps["Love Piece 2F"],
+	bit4(0x0019e75e) == value(1),
+	add_source(delta(bitcount(0x0019e81e))),
+	partial_bitcount(0x0019e81f, range(4, 8), is_delta=True, count=11),
+	add_source(bitcount(0x0019e81e)),
+	partial_bitcount(0x0019e81f, range(4, 8), count=12, measured=Measured.MEASURED)
+])
+ach_set.add_achievement(ach_lovemachine)
 
 ach_metaldetector = Achievement(id=625551, badge=0, title="All That Glitters",
 	description='Reveal 100 items using a Metal Detector, earning the title of "Detector Ironman"',

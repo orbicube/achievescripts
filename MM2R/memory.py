@@ -1,5 +1,4 @@
 from pycheevos.core.helpers import *
-from pycheevos.models.generic import GameObject
 
 class Memory:
 
@@ -22,6 +21,7 @@ class Memory:
 	kills = dword(0x001949e8)
 
 	ngplus_count = byte(0x001aa3e4)
+	difficulty = byte(0x0019483d)
 
 	char_base = 0x00195dbc	
 	vehicle_base = 0x00196d0c
