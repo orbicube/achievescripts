@@ -36,6 +36,9 @@ class Memory:
 		"SP": 0x10
 	}
 
+	map_base = tbyte(0x0019d2dc)
+	map_ptr = map_base >> tbyte(0x10)
+
 	movable = dword(0x001295c4)
 	dialogue = tbyte(0x001910d4) >> dword(0xb0)
 
@@ -46,49 +49,25 @@ class Memory:
 	money = dword(0x001947d8)
 	pocket_money = word_be(0x0019ea2b)
 
-	map_base = tbyte(0x0019d2dc)
-	map_ptr = map_base >> tbyte(0x10)
-
-
 	detector_count = byte(0x0019e82c)
 	shell_count = byte(0x0019e82d)
-
-	winnings = word_be(0x0019e830)
+	furniture_bought = tbyte_be(0x0019e833)
+	winnings = tbyte_be(0x0019e82f)
+	stamps = word(0x00194844)
+	rental_fees = tbyte_be(0x0019e829)
 
 	def __init__(self):
 		self.region = region
 		self.game_state = game_state
 
-		self.chars = {}
-		char_names = ["Player", "Axel", "Miska", "Clint", "Atena", "Sara",
-			"Flor", "Hans", "Pablo", "Pochi", "Licky", "Hachi",
-			"Money Eater 1", "Money Eater 2", "Money Eater 3", "NG+ Player",
-			"Maria", "Garcia", "Fei", "Apache"]
-		char_index = 0
-
+		self.chars = []
+		#char_names = ["Player", "Axel", "Miska", "Clint", "Atena", "Sara",
+		#	"Flor", "Hans", "Pablo", "Pochi", "Licky", "Hachi",
+		#	"Money Eater 1", "Money Eater 2", "Money Eater 3", "NG+ Player",
+		#	"Maria", "Garcia", "Fei", "Apache"]
+		#char_index = 0
 		for i in range(self.char_base, 0x00196c49, 196):
-			char_dict = {}
-
-			char_dict["Available"] = word(i + 0x10)
-			char_dict["Level"] = word(i + 0x12)
-			char_dict["HP"] = {
-				"Current": word(i + 0x1c),
-				"Max": word(i + 0x1e)
-			}
-			char_dict["Subclass"] = {
-				"Index": byte(i + 0x7d),
-				"Levels": {
-					"Hunter": byte(i + 0x7e),
-					"Mechanic": byte(i + 0x7f),
-					"Soldier": byte(i + 0x80),
-					"Nurse": byte(i + 0x81),
-					"Wrestler": byte(i + 0x82),
-					"Artist": byte(i + 0x83)
-				}
-			}
-
-			self.chars[char_names[char_index]] = char_dict
-			char_index += 1
+			self.chars.append(Character(i))
 
 		self.enemies = []
 		for i in range(0x001ab5cc, 0x001abc69, 188):
@@ -155,6 +134,30 @@ class Memory:
 		self.vending = Vending(tbyte(0x00129690))
 
 
+class Character(GameObject):
+	def __init__(self, address):
+		super().__init__(address)
+
+		self.portrait = self.offset(0xd, byte)
+		self.available = self.offset(0x10, word)
+		self.level = self.offset(0x12, word)
+		self.hp = {
+			"Current": self.offset(0x1c, word),
+			"Max": self.offset(0x1e, word)
+		}
+		self.subclass = {
+			"Index": self.offset(0x7d, byte),
+			"Levels": {
+				"Hunter": self.offset(0x7e, byte),
+				"Mechanic": self.offset(0x7f, byte),
+				"Soldier": self.offset(0x80, byte),
+				"Nurse": self.offset(0x81, byte),
+				"Wrestler": self.offset(0x82, byte),
+				"Artist": self.offset(0x83, byte)
+			}
+		}
+
+
 class Frog(GameObject):
 	def __init__(self, address):
 		super().__init__(
@@ -167,14 +170,14 @@ class Frog(GameObject):
 		self.winnings = self.offset(0x22c, dword)
 
 	def active(self):
-		return game_state == 2 and self.state > 0 and self.state < 11
+		return self.state > 0 and self.state < 11
 
 
 class Tanks(GameObject):
 	def __init__(self, address):
 		super().__init__(address)
 
-		self.active = self.offset(0x2c, dword)
+		self.in_tanks = self.offset(0x2c, dword)
 		self.winnings = self.offset(0xc0, dword)
 		self.combo = word(0x00278f0c)
 		self.movable = dword(0x00278f20)
@@ -182,7 +185,7 @@ class Tanks(GameObject):
 		self.score = dword(0x00278f5c)
 
 	def active(self):
-		return game_state == 2 and self.active == 1
+		return self.in_tanks == 1
 
 class Slots(GameObject):
 	def __init__(self, address):
@@ -192,7 +195,7 @@ class Slots(GameObject):
 		self.winnings = dword(0x00277828)
 
 	def active(self):
-		return game_state == 3 and self.active_ptr == 0x1aa5c4
+		return self.active_ptr == 0x1aa5c4
 
 
 class Vending(GameObject):

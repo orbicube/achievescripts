@@ -108,12 +108,12 @@ rp.add_display([mem.game_state == 2, mem.frog.active()],
 	f"Playing Ribbit Race in @Map({mem.current_map})")
 rp.add_display([mem.game_state == 3, mem.slots.active()],
 	f"Playing Slots in @Map({mem.current_map})")
-rp.add_display([mem.game_state == 2, mem.tanks.active == 1],
+rp.add_display([mem.game_state == 2, mem.tanks.active()],
 	f"Playing Bang Bang Tanks! in @Map({mem.current_map})")
 
 for i in range(1,4):
 	rp.add_display([mem.party[i] == 0xff, mem.ngplus_count > 0],
-		f"NG+@Number({mem.ngplus_count})@Difficulty({mem.difficulty}) | @Map({mem.current_map}) | {party_info(i)}")
+		f"@Map({mem.current_map}) | NG+@Number({mem.ngplus_count})@Difficulty({mem.difficulty}) | {party_info(i)}")
 	rp.add_display([mem.party[i] == 0xff],
 		f"@Map({mem.current_map}) | {party_info(i)}")
 

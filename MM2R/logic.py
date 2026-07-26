@@ -2,6 +2,7 @@ from pycheevos.core.helpers import *
 from pycheevos.core.constants import *
 from pycheevos.models.achievement import Achievement
 from pycheevos.models.set import AchievementSet
+from pycheevos.models.leaderboard import Leaderboard
 
 from enum import Enum
 import collections
@@ -205,7 +206,9 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 		3, None, bit3(0x0019e946), maps["Trader Camp (Bombdelion) Tent"], None),
 	(625247, 0, "Towards Sanctuary", "Escort the traders safely from Hatoba to Azusa",
 		3, None, bit2(0x0019e931), maps["Azusa Bottom"], None),
-	(625248, 0, "Can't Run, Can't Hide", "Hunt down the Greater Manta using Zushio's Signal Bullet technology",
+	(626287, 0, "Just Needed a Push", "Open the tunnel from Hatoba to Bazaarska",
+		1, None, bit0(0x0019e91d), maps["Bito's Tunnel"], None),
+	(625248, 0, "Can't Run, Can't Hide", "Hunt the Greater Manta using Zushio's Signal Bullet technology",
 		4, None, bit1(0x0019e925), maps["Bazaarska Vehicle Shop"], None),
 	(625249, 0, "No Place Like Home", "Show Sally of Bazaarska the wider world, then return her home",
 		2, None, bit5(0x0019e948), maps["Bazaarska"], None),
@@ -214,7 +217,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(625251, 0, "Arming the Resistance", "Perform some light weapons trafficking for Richie in the Mindless hideout",
 		3, None, bit5(0x0019e954), maps["El Nino Teleporter"], None),
 	(625252, 0, "Squirrelly Shark", "Hunt the Iron Shark for the traders near Bar Thirsty",
-		3, None, bit0(0x0019e928), maps["Trader Camp (Iron Shark)"], None),
+		4, None, bit0(0x0019e928), maps["Trader Camp (Iron Shark)"], None),
 	(625253, 0, "You'll Turn That Easily?", 'Upon arriving at Delta Rio by boat, accept the Grappler\'s invitation to join, earning the title of "Bad Rookie"',
 		1, AchievementType.MISSABLE, bit2(0x0019e9d4), maps["Delta Rio Ferry Terminal"], [(bit2(0x0019e759), True)]),
 	(625254, 0, "In from the Cold", "Find the spy within Mendoza's inner circle and deliver their report to Richie",
@@ -332,7 +335,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(625516, 0, "Long Lost Libations", "Sell 10 bottles of vintage liquor to the rebuilt Mado Bar",
 		2, None, bit5(0x0019e953), maps["Mado Bar"], None),
 	(625517, 0, "Skittish Customer", "Deliver a package from Smith in the rebuilt Mado Bar to the Human Village",
-		3, None, bit2(0x0019e933), maps["Human Village"], None),
+		2, None, bit2(0x0019e933), maps["Human Village"], None),
 	(625518, 0, "Sin City", "Repair all machines in the rebuilt Mado Casino",
 		4, None, bit3(0x0019e91b), maps["Mado Casino"], None),
 ]
@@ -348,7 +351,7 @@ for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
 	ach_set.add_achievement(ach)
 	#print(title)
 
-ach_cannon = Achievement(id=0, badge=0, title="Cannon Connoisseur",
+ach_cannon = Achievement(id=626131, badge=0, title="Cannon Connoisseur",
 	description='Complete both the "Vintage Cannon" and "The Desert Tank Freak" quests',
 	points=4, type=AchievementType.MISSABLE)
 ach_cannon.add_core([
@@ -364,6 +367,7 @@ ach_cannon.add_alt([
 	mem.current_map == maps["Caterpillar Villa"],
 	delta(bit1(0x0019e942)) == value(0)
 ])
+ach_set.add_achievement(ach_cannon)
 
 ach_allie = Achievement(id=625644, badge=0, title="Reunited Lovers",
 	description="Listen to Allie and Hunt discuss their future in Hatoba",
@@ -381,7 +385,7 @@ ach_set.add_achievement(ach_allie)
 ## Enemy Bounties
 bounty_types = []
 ach_bounties = [ # ID, Badge, Title, Description, Points, Type, Name, Map
-	(625293, 0, "Shark out of Sand", "Defeat the Sand Shark in the desert east of Mado",
+	(625293, 0, "Like a Shark out of Water", "Defeat the Sand Shark in the desert east of Mado",
 		3, None, "Sand Shark", maps["Overworld"]),
 	(625294, 0, "Desperoid for Attention", "Defeat the Desperoid near El Niño",
 		3, None, "Desperoid", maps["Overworld"]),
@@ -484,7 +488,7 @@ for ach_id, badge, title, desc, points, hunts_req in ach_hunts:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 
 	# Only two maps where you can hand in Challenge Hunts
-	logic = [ SAVE_PROTECTION,
+	logic = [ pause_if(~SAVE_PROTECTION),
 		(mem.current_map == maps["Hatoba Hunt Office"]) | (mem.current_map == maps["Villain Museum"]
 	)]
 
@@ -518,7 +522,7 @@ ach_database = [ # ID, Badge, Title, Description, Points, Type, Threshold
 for ach_id, badge, title, desc, points, ach_type, threshold in ach_database:
 	ach = Achievement(id=ach_id, badge=badge, title=title, type=ach_type,
 		description=f"Fill {desc} of the monster database", points=points)
-	logic = [ IN_COMBAT ]
+	logic = [ pause_if(~IN_COMBAT) ]
 
 	logic.append(add_source(delta(bit0(0x0019e761))))
 	for addr in range(0x0019e762, 0x0019e79f):
@@ -538,30 +542,48 @@ for ach_id, badge, title, desc, points, ach_type, threshold in ach_database:
 
 #####################
 ## Character Recruits
-ach_chars = [ # ID, Badge, Title, Description, Points, Character, Maps
+ach_chars_human = [ # ID, Badge, Title, Description, Points, Character, Maps
 	(625329, 0, "El Niño Espionage", "Free Axel from captivity in El Niño, recruiting him to your party",
-		4, "Axel", maps["El Nino"]),
-	(625330, 0, "Pick of the Litter", "Find Pochi in the Dog Village, recruiting them to your party",
-		3, "Pochi", maps["Dog Village"]),
+		4, 1, maps["El Nino"]),
 	(625331, 0, "You Only Live Thrice", "Rekindle Miska's undying spirit, recruiting her to your party",
-		4, "Miska", maps["Mado Mince's Lab"]),
-	(625332, 0, "They Grow Up So Fast", "Grow a Money Eater, recruiting it into your party",
-		3, "Money Eater 1", (maps["Mado Garage"], maps["Bennett's House"], maps["Delta Rio Apartments 2F"])),
-	(625333, 0, "Truly Ferocious", "Encounter and defeat the Demon Dog Licky in the plains of Nobotke, recruiting them to your party",
-		4, "Licky", maps["Overworld"]),
-	(625334, 0, "Tempting the Guardian", "Feed Hachi its favorite treat in Taisha, recruiting them to your party",
-		3, "Hachi", maps["Taisha"])
+		4, 2, maps["Mado Mince's Lab"]),
 ]
-for ach_id, badge, title, desc, points, char_name, map_id in ach_chars:
+for ach_id, badge, title, desc, points, char, map_id in ach_chars_human:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 	ach.add_core([
 		SAVE_PROTECTION,
 		add_maps(map_id),
-		delta(mem.chars[char_name]["Available"]) == value(0),
-		mem.chars[char_name]["Available"] == value(1)
+		delta(mem.chars[char].available) == value(0),
+		mem.chars[char].available == value(1)
 	])
 	ach_set.add_achievement(ach)
 
+# Animals can technically go
+ach_chars_animal = [  # ID, Badge, Title, Description, Points, Character, Maps
+	(625330, 0, "Pick of the Litter", "Find Pochi in the Dog Village, recruiting them to your party",
+		3, 0x0f, maps["Dog Village"]),
+	(625332, 0, "They Grow Up So Fast", "Grow a Money Eater, recruiting it into your party",
+		3, 0x13, (maps["Mado Garage"], maps["Bennett's House"], maps["Delta Rio Apartments 2F"])),
+	(625333, 0, "Truly Ferocious", "Encounter and defeat the Demon Dog Licky in the plains of Nobotke, recruiting them to your party",
+		4, 0x10, maps["Overworld"]),
+	(625334, 0, "Tempting the Guardian", "Feed Hachi its favorite treat in Taisha, recruiting them to your party",
+		3, 0x11, maps["Taisha Shrine"])
+]
+for ach_id, badge, title, desc, points, char, map_id in ach_chars_animal:
+	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
+	ach.add_core([
+		SAVE_PROTECTION,
+		add_maps(map_id)
+	])
+
+	for i in range(9, 15):
+		ach.add_alt([
+			mem.chars[i].portrait == char,
+			delta(mem.chars[i].available) == value(0),
+			mem.chars[i].available == value(1)
+		])
+
+	ach_set.add_achievement(ach)
 
 ################
 ## Class Levels
@@ -581,7 +603,7 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 	ach = Achievement(id=ach_id, badge=badge, description="", title=title, points=points, type=None)
 	ach.add_core([
 		SAVE_PROTECTION,
-		mem.chars["Player"]["Level"] > value(1)
+		mem.chars[0].level > value(1)
 	])
 
 	logic = []
@@ -897,14 +919,15 @@ for ach_id, badge, title, desc, points, threshold in ach_worldmaps:
 # Minigames
 # Cumulative minigame winnings get calculated on exiting a minigame
 # To properly measure it in the toolkit, we have to use different values depending on the miigame
-ach_minigames = Achievement(id=625609, badge=0, title="Rigged in Your Favour", points=5, type=None,
+ach_minigames = Achievement(id=625609, badge=0, title="Rigged in Your Favour", points=4, type=None,
 	 description='Win 10,000G from minigames, earning the title of "Wasteland Gambler"')
 ach_minigames.add_core([
 	SAVE_PROTECTION
 ])
 # Ribbit Race
 ach_minigames.add_alt([
-	pause_if(~mem.frog.active()),
+	pause_if((mem.frog.state == value(0)) | (mem.frog.state > value(10))),
+	mem.game_state == value(2),
 	remember(mem.winnings / value(2)),
 	remember(delta(mem.frog.winnings) + recall()),
 	recall() < value(10000),
@@ -915,6 +938,7 @@ ach_minigames.add_alt([
 # Bang Bang Tanks
 ach_minigames.add_alt([
 	pause_if(~mem.tanks.active()),
+	mem.game_state == value(2),
 	remember(mem.winnings / value(2)),
 	remember(delta(mem.tanks.winnings) + recall()),
 	recall() < value(10000),
@@ -925,6 +949,7 @@ ach_minigames.add_alt([
 # Slots
 ach_minigames.add_alt([
 	pause_if(~mem.slots.active()),
+	mem.game_state == value(3),
 	remember(mem.winnings / value(2)),
 	remember(delta(mem.slots.winnings) + recall()),
 	recall() < value(10000),
@@ -934,12 +959,27 @@ ach_minigames.add_alt([
 ])
 ach_set.add_achievement(ach_minigames)
 
+ach_ribbitrace = Achievement(id=625371, badge=0, title="Froggy Derby",
+	description="Place a winning bet on a pair of frogs with odds of 5 or higher",
+	points=5, type=None)
+ach_ribbitrace.add_core([
+	SAVE_PROTECTION,
+	mem.game_state == value(2),
+	delta(mem.frog.state) == value(5),
+	mem.frog.state == value(6),
+	remember(mem.frog.bet_cost),
+	mem.frog.bet_value == recall(),
+	remember(recall() * value(5)),
+	mem.frog.payout >= recall()
+])
+ach_set.add_achievement(ach_ribbitrace)
+
 ach_tanks_score = Achievement(id=625901, badge=0, title="Pro Wargamer",
-	description="Obtain a score of 1000 or higher in Bang Bang Tanks! Reloaded",
+	description="Obtain a score of 800 or higher in Bang Bang Tanks! Reloaded",
 	points=5, type=None)
 ach_tanks_score.add_core([
+	mem.tanks.active(),
 	mem.game_state == value(2),
-	mem.tanks.active == value(1),
 	delta(mem.tanks.state) == value(1),
 	mem.tanks.state == value(0),
 	remember(mem.tanks.score & value(0x80000000)),
@@ -952,8 +992,8 @@ ach_tanks_combo = Achievement(id=625902, badge=0, title="Sharpshooter Supreme",
 	description="Reach a combo of 25 hits in Bang Bang Tanks! Reloaded",
 	points=5, type=None)
 ach_tanks_combo.add_core([
+	mem.tanks.active(),
 	mem.game_state == value(2),
-	mem.tanks.active == value(1),
 	mem.tanks.state == value(1),
 	delta(mem.tanks.combo) < value(25),
 	mem.tanks.combo >= value(25)
@@ -968,7 +1008,7 @@ ach_igoggles = Achievement(id=625367, badge=0, title="From the Ashes",
 	points=1, type=AchievementType.PROGRESSION)
 ach_igoggles.add_core([
 	SAVE_PROTECTION,
-	mem.current_map == maps["Mado"],
+	mem.current_map == maps["Mado Garage"],
 	delta(mem.inventory["Tools"][0]["ID"]) == 0,
 	mem.inventory["Tools"][0]["ID"] == 0x05b,
 	delta(mem.inventory["Tools"][0]["Amount"]) == 0,
@@ -992,7 +1032,7 @@ ach_dogs = Achievement(id=625369, badge=0, title="Free to a Good Home",
 	description="Bring all of the dogs from Dog Village to the old man in the greenhouse in Mado",
 	points=2, type=AchievementType.MISSABLE)
 ach_dogs.add_core([
-	SAVE_PROTECTION,
+	pause_if(~SAVE_PROTECTION),
 	mem.current_map == maps["Mado Greenhouse"],
 	add_source(delta(bit4(0x19e9c2))), add_source(delta(bit2(0x19e9c2))),
 	add_source(delta(bit0(0x19e9c2))), add_source(delta(bit6(0x19e9c3))),
@@ -1010,7 +1050,7 @@ ach_modders = Achievement(id=625523, badge=0, title="Pit Crew",
 	description="Send every vehicle specialist to Nile's Garage in Mado",
 	points=5, type=None)
 ach_modders.add_core([
-	SAVE_PROTECTION,
+	pause_if(~SAVE_PROTECTION),
 	partial_bitcount(0x0019e9d7, range(0, 3), is_delta=True),
 	partial_bitcount(0x0019e9d8, range(5, 8), is_delta=True, count=5),
 	partial_bitcount(0x0019e9d7, range(0, 3)),
@@ -1022,7 +1062,7 @@ ach_dogsystem = Achievement(id=625524, badge=0, title="Every Dog Has Its System"
 	description="Register every location into the Dog System for use as fast travel",
 	points=5, type=None)
 ach_dogsystem.add_core([
-	SAVE_PROTECTION,
+	pause_if(~SAVE_PROTECTION),
 	partial_bitcount(0x0019e90d, range(0, 3), is_delta=True),
 	add_source(delta(bitcount(0x0019e90e))),
 	add_source(delta(bitcount(0x0019e90f))),
@@ -1035,7 +1075,7 @@ ach_dogsystem.add_core([
 ach_set.add_achievement(ach_dogsystem)
 
 ach_vending = Achievement(id=625370, badge=0, title="Your Lucky Day",
-	description="Win a prize from a vending machine", points=3, type=None)
+	description="Win a prize from a vending machine", points=2, type=None)
 ach_vending.add_core([
 	SAVE_PROTECTION,
 	mem.game_state == value(2),
@@ -1099,23 +1139,63 @@ ach_shellcraft.add_core([
 ])
 ach_set.add_achievement(ach_shellcraft)
 
-ach_ribbitrace = Achievement(id=625371, badge=0, title="Froggy Derby",
-	description="Place a winning bet on a pair of frogs with odds of 5 or higher",
-	points=5, type=None)
-ach_ribbitrace.add_core([
+ach_millionaire = Achievement(id=626089, badge=0, title="Post-Apocalyptic Monopolist",
+	description='Reach 10,000,000G, earning the title of "Millionaire"',
+	points=10, type=None)
+ach_millionaire.add_core([
 	SAVE_PROTECTION,
-	mem.game_state == value(2),
-	delta(mem.frog.state) == value(5),
-	mem.frog.state == value(6),
-	remember(mem.frog.bet_cost),
-	mem.frog.bet_value == recall(),
-	remember(recall() * value(5)),
-	mem.frog.payout >= recall()
+	delta(bit4(0x0019e760)) == value(0),
+	bit4(0x0019e760) == value(1),
+	delta(mem.money) < value(10000000),
+	mem.money >= value(10000000)
 ])
-ach_set.add_achievement(ach_ribbitrace)
+ach_set.add_achievement(ach_millionaire)
+
+ach_furniture = Achievement(id=626090, badge=0, title="Extreme Makeover: Wasteland Edition",
+	description='Spend 100,000G buying furniture for your girlfriends, earning the title of "Spending Boyfriend"',
+	points=4, type=None)
+ach_furniture.add_core([
+	SAVE_PROTECTION,
+	delta(bit5(0x0019e75e)) == value(0),
+	bit5(0x0019e75e) == value(1),
+	remember(delta(mem.furniture_bought) / value(2)),
+	recall() < value(100000),
+	remember(mem.furniture_bought / value(2)),
+	measured(recall() >= value(100000)),
+	measured_if(mem.furniture_bought > delta(mem.furniture_bought))
+])
+ach_set.add_achievement(ach_furniture)
+
+ach_stamps = Achievement(id=626117, badge=0, title="Prolific Philatelist",
+	description="Receive a total of 10,000 stamps by selling items to the Mado Stamp Shop, earning the W-Tornado Cannon",
+	points=5, type=None)
+ach_stamps.add_core([
+	SAVE_PROTECTION,
+	mem.current_map == maps["Mado Garage"],
+	mem.movable == value(1),
+	delta(mem.stamps) < 10000,
+	mem.stamps >= 10000 
+])
+ach_set.add_achievement(ach_stamps)
+
+ach_rental = Achievement(id=626118, badge=0, title="Rising Insurance Premiums",
+	description='Pay 10,000G in Rental Tank fees, earning the title of "Rich No-Refunder"',
+	points=4, type=None)
+ach_rental.add_core([
+	SAVE_PROTECTION,
+	bit6(0x0019e75f) == value(1),
+	delta(bit5(0x0019e75f)) == value(0),
+	bit5(0x0019e75f) == value(1),
+	remember(delta(mem.rental_fees) * value(2)),
+	recall() < value(10000),
+	remember(mem.rental_fees * value(2)),
+	measured(recall() >= value(10000)),
+	measured_if(mem.rental_fees > delta(mem.rental_fees))
+])
+ach_set.add_achievement(ach_rental)
 
 # No flag for beating them while tending the shop, so we have to detect them being defeated in combat
-ach_pichistore = Achievement(id=625372, badge=0, points=3, type=AchievementType.MISSABLE,
+ach_pichistore = Achievement(id=625372, badge=0, points=2, type=AchievementType.MISSABLE,
 	title="Pichi Pichi on the Job", description="Defeat the Pichi Pichi Brothers while tending the ill trader's shop")
 ach_pichistore.add_core(combat_logic(maps["Trader Camp (Shopkeep) Left Tent"], (0x15e, 0x15d)))
 ach_set.add_achievement(ach_pichistore)
@@ -1134,5 +1214,23 @@ ach_marriage.add_core([
 	mem.game_state == value(4)
 ])
 ach_set.add_achievement(ach_marriage)
+
+
+###############
+# Leaderboards
+lb_tanks = Leaderboard(id=167853, title="Bang Bang Tanks! - High Score",
+	description="Achieve the highest score in Bang Bang Tanks!",
+	format=LeaderboardFormat.VALUE)
+lb_tanks.set_start([
+	SAVE_PROTECTION,
+	mem.game_state == value(2),
+	mem.tanks.active(),
+	delta(mem.tanks.state) == value(1),
+	mem.tanks.state == value(0)
+])
+lb_tanks.set_cancel(always_false())
+lb_tanks.set_submit(always_true())
+lb_tanks.set_value(measured(mem.tanks.score))
+ach_set.add_leaderboard(lb_tanks)
 
 ach_set.save(path="D:\\Games\\Emulation\\Emulators\\RALibertro\\RACache\\Data")
