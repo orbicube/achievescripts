@@ -301,7 +301,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(625499, 0, "Look Around You", "Repair Michael inside Devil Island, then find eight Space Parts using his scanner",
 		4, None, bit0(0x0019e934), maps["Overworld"], None),
 	(625500, 0, "Comfort at What Cost?", "Complete all three of Hyde's escalating requests to alleviate his suffering at the Staff Housing",
-		10, None, bit6(0x0019e938), maps["Staff Housing"], None),
+		10, AchievementType.MISSABLE, bit6(0x0019e938), maps["Staff Housing"], None),
 	(625501, 0, "Radical Radish Remedies", "Fulfil Dan's third and final request to help Cecile's illness",
 		5, None, bit1(0x0019e923), maps["Islaporto Sewers"], None),
 	(625502, 0, "No Rehabilitation, Only Revolution", "Defeat the warden of Deathcruz, liberating the prison town",
