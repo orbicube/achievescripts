@@ -311,7 +311,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(625504, 0, "Would Hate to See Their Overdue Fees", "Find and return the missing 13th rental tank for the receptionist at Melt-Town",
 		2, None, bit6(0x0019e931), maps["Melt-town Interior"], None),
 	(625505, 0, "Cross-Continental Courier", 'Carry cargo shipments from Hoc\'s Trading Post to Melt-town, earning the title of "Wasteland Courier"',
-		5, None, bit5(0x0019e93a), maps["Melt-town Interior"], None),
+		4, AchievementType.MISSABLE, bit5(0x0019e93a), maps["Melt-town Interior"], None),
 	(625506, 0, "Pichi Pichi in the Fog", "Defeat the Pichi Pichi Brothers after falling into their trap west of Melt-town",
 		5, None, bit5(0x0019e933), maps["Mundane Ruins (Rain Valley)"], None),
 	(625507, 0, "Become Eternal", "Open the path from the Eternal Gate to Bias City",
@@ -622,7 +622,6 @@ for ach_id, badge, title, points, char_class, class_index, threshold in ach_leve
 		class_desc = " with Pochi, Licky or Hachi"
 	elif char_class == "Money Eater":
 		class_desc = " with a Money Eater"
-
 	else: # Regular classes should account for subclassing
 		class_desc = f" with {char_class} as a party member's primary or secondary class"
 
@@ -815,22 +814,33 @@ ach_kills = [ # ID, Badge, Title, Description, Points, Threshold, Title
 ]
 for ach_id, badge, title, desc, points, threshold, title_bit in ach_kills:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
+	if threshold == 10000:
+		ach.add_core(pause_if(~IN_COMBAT))
+	else:
+		ach.add_core(IN_COMBAT)
+
 	ach.add_core([
-		measured_if(mem.kills > delta(mem.kills)),
-		delta(mem.kills) == threshold - 1,
-		measured(mem.kills == threshold),
 		delta(title_bit) == value(0),
-		title_bit == value(1)
+		title_bit == value(1),
+		delta(mem.kills) < threshold,
 	])
+
+	if threshold == 10000:
+		ach.add_core(
+			measured_percent(mem.kills >= threshold))
+	else:
+		ach.add_core(mem.kills >= threshold)
+
 	ach_set.add_achievement(ach)
 
 # Kills in one combat challenge
 challenge_kills = Achievement(id=625358, badge=0, title="They Just Keep Coming",
 	description="Defeat 30 enemies in a single combat encounter", points=5)
 challenge_kills.add_core([
-	IN_COMBAT,
-	measured(mem.kills > delta(mem.kills)).with_hits(30),
-	reset_if(mem.game_state == value(1))
+	reset_if(mem.game_state != value(2)),
+	add_source(mem.kills - delta(mem.kills)),
+	add_hits(mem.kills > delta(mem.kills)),
+	measured(always_false()).with_hits(30)
 ])
 ach_set.add_achievement(challenge_kills)
 
