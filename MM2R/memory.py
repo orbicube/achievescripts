@@ -61,9 +61,9 @@ class Memory:
 		self.game_state = game_state
 
 		self.chars = []
-		#char_names = ["Player", "Axel", "Miska", "Clint", "Atena", "Sara",
-		#	"Flor", "Hans", "Pablo", "Pochi", "Licky", "Hachi",
-		#	"Money Eater 1", "Money Eater 2", "Money Eater 3", "NG+ Player",
+		#char_names = ["Player", "Axel", "Miska", "Cli , "Atena", "Sara",
+		#	"Flor", "Hans", "Pablo", "Pochi", "Licky", achi",
+		#	"Money Eater 1", "Money Eater 2", "Money E r 3", "NG+ Player",
 		#	"Maria", "Garcia", "Fei", "Apache"]
 		#char_index = 0
 		for i in range(self.char_base, 0x00196c49, 196):
@@ -170,7 +170,7 @@ class Frog(GameObject):
 		self.winnings = self.offset(0x22c, dword)
 
 	def active(self):
-		return self.state > 0 and self.state < 11
+		return self.state > 0
 
 
 class Tanks(GameObject):

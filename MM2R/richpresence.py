@@ -31,7 +31,7 @@ rp.add_lookup("Map", {
 	(0xad, 0xae): "Bar Thirsty",
 	range(0xaf, 0xb3): "Nobotoke Village",
 	range(0xb3, 0xb8): "Beihab Island",
-	range(0xb8, 0xbb): "Water Bypass",
+	range(0xb8, 0xbd): "Water Bypass",
 	(0xbd, 0xbe): "Oil Drilling Site",
 	range(0xc0, 0xc2): "Philosophy Pond",
 	range(0xc2, 0xc5): "Staff Housing",
@@ -104,7 +104,10 @@ def party_info(party_size):
 
 rp.add_display([mem.current_map >= 0xfffe], "On the Title Screen")
 
-rp.add_display([mem.game_state == 2, mem.frog.active()],
+
+rp.add_display([mem.game_state == 4, mem.current_map == 0xbc], "Watching the sunset after destroying the Bias Grapplers")
+rp.add_display([mem.game_state == 4], "Watching the sunset after marrying their true love")
+rp.add_display([mem.game_state == 2, mem.frog.state > 0,  mem.frog.state < 11],
 	f"Playing Ribbit Race in @Map({mem.current_map})")
 rp.add_display([mem.game_state == 3, mem.slots.active()],
 	f"Playing Slots in @Map({mem.current_map})")
