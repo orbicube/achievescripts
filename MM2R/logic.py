@@ -15,7 +15,7 @@ mem = Memory()
 import json
 #	Converts a simple non-pointer code note into a dict with descriptions as keys
 #	Notes should be formatted as Description\r\n\0xValue1 = Key1\r\n0xValue2 = Key2
-#	If duplicate keys, addresses will be in a List
+#	If duplicate keys, addresses will be in a tuple
 def note2dict(notefile: str, addr: str):
 	with open(notefile) as data_file:
 	    json_data = data_file.read()
@@ -33,10 +33,10 @@ def note2dict(notefile: str, addr: str):
 		val = int(val, 16)
 
 		if key_str in note_dict:
-			if not isinstance(note_dict[key_str], list):
-				note_dict[key_str] = [note_dict[key_str], val]
+			if not isinstance(note_dict[key_str], tuple):
+				note_dict[key_str] = (note_dict[key_str], val)
 			else:
-				note_dict[key_str].append(val)
+				note_dict[key_str] + (val, )
 		else:
 			note_dict[key_str] = val
 
@@ -437,7 +437,7 @@ ach_bounties = [ # ID, Badge, Title, Description, Points, Type, Name, Map
 	(625317, 714722, "Ted and Gone", "Defeat Ted Broiler within Bias City, completing your quest for vengeance",
 		25, AchievementType.PROGRESSION, "Ted Broiler", maps["Bias City B3F"]),
 	(625318, 714726, "Apex Predator", "Defeat the U-U-Shark at the Water Bypass",
-		50, AchievementType.MISSABLE, "U-U-Shark", maps["Water Bypass"]),
+		50, None, "U-U-Shark", maps["Water Bypass"]),
 	(625319, 714727, "Brand New Daedalus", "Defeat the EX-Daedalus in the desert west of Deathcruz",
 		50, None, "EX-Daedalus", maps["Overworld"]),
 	(625320, 714728, "Angry Mama", "Defeat the Mothershipsaurus and its gaggle of Battleshipsauri in Rain Valley",
@@ -536,7 +536,7 @@ for ach_id, badge, title, desc, points, ach_type, threshold in ach_database:
 		logic.append(add_source(bitcount(addr)))
 	logic.extend(partial_bitcount(addr=0x0019e79f, bits=range(4, 8),
 		count=threshold, measured=Measured.MEASURED))
-
+ 
 	ach.add_core(logic)
 	ach_set.add_achievement(ach)
 
@@ -898,7 +898,7 @@ for ach_id, badge, title, desc, points, threshold in ach_worldmaps:
 			pause_if(mem.map_base == value(0)),
 		])
 	else:
-		ach.add_core([delta(mem.map_ptr) > value(0), mem.map_ptr > value(0)])
+		ach.add_core([mem.map_base > value(0), delta(mem.map_ptr) > value(0), mem.map_ptr > value(0)])
 
 	for i in range(0, 559):
 		ach.add_core(add_source(delta(mem.map_vals[i])))

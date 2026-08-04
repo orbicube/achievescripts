@@ -1,7 +1,7 @@
 #
 #	Converts a simple non-pointer code note into a dict with descriptions as keys
 #	Notes should be formatted as Description\r\n\0xAddress1 = Key1\r\n0xAddress2 = Key2
-#	If duplicate keys, addresses will be in a List
+#	If duplicate keys, addresses will be in a tuple
 #
 
 import json
@@ -21,10 +21,10 @@ def note2dict(notefile: str, addr: int):
 		val, key_str = line.split(" = ")
 
 		if key_str in note_dict:
-			if type(note_dict[key_str]) != List:
-				note_dict[key_str] = [note_dict[key_str], val]
+			if not isinstance(note_dict[key_str], tuple):
+				note_dict[key_str] = (note_dict[key_str], val)
 			else:
-				note_dict[key_str].append(val)
+				note_dict[key_str] + (val, )
 		else:
 			note_dict[key_str] = val
 
