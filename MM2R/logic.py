@@ -41,7 +41,7 @@ def note2dict(notefile: str, addr: str):
 			note_dict[key_str] = val
 
 	return note_dict
-maps = note2dict("D:\\Games\\Emulation\\Emulators\\RALibertro\\RACache\\Data\\24022-Notes.json", "0x119740")
+maps = note2dict("maps.json", "0x119740")
 
 ###################
 ## Helper functions
