@@ -602,10 +602,7 @@ ach_levels = [ # ID, Badge, Title, Points, Class, Index, Threshold
 ]
 for ach_id, badge, title, points, char_class, class_index, threshold in ach_levels:
 	ach = Achievement(id=ach_id, badge=badge, description="", title=title, points=points, type=None)
-	ach.add_core([
-		SAVE_PROTECTION,
-		mem.chars[0].level > value(1)
-	])
+	ach.add_core(SAVE_PROTECTION)
 
 	logic = []
 	for i in range(0, 4): # All achievements care about primary classes
