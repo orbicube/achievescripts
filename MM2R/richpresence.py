@@ -93,7 +93,11 @@ rp.add_lookup("Difficulty", {
 })
 
 def char_info(slot, offset):
-	return f"I:{mem.party[slot]}*{mem.offsets['Character']}_M:{byte(mem.char_base+offset)}"
+	if offset == mem.offsets['Level']:
+		return f"I:{mem.party[slot]}*{mem.offsets['Character']}_M:{word(mem.char_base+offset)}"	
+	else:
+		return f"I:{mem.party[slot]}*{mem.offsets['Character']}_M:{byte(mem.char_base+offset)}"
+
 
 def party_info(party_size):
 	chars = []

@@ -171,6 +171,7 @@ def dialogue_logic(dialogue_pre: int, dialogue_post: int, region: Region):
 
 ## Constants
 IN_COMBAT = (mem.game_state == value(2))
+IN_OVERWORLD = (mem.game_state == value(1))
 # Not strictly needed, save data is loaded while on main menu
 SAVE_PROTECTION = (delta(mem.current_map) < maps["Loading Save"])
 MEASURED_PROTECTION = pause_if((delta(mem.current_map) >= maps["Loading Save"]) | (mem.current_map >= maps["Loading Save"]))
@@ -322,7 +323,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(625509, 714725, "Melon Madness", "Reload your completed save and exterminate the Meloween infestation in Deathcruz",
 		4, None, bit6(0x0019e939), maps["Deathcruz Interior"], None),
 	(625510, 714729, "With Friends Like These...", "Help Professor Bato find some new friends",
-		50, None, bit0(0x0019e93d), maps["Bato Lab"], None),
+		25, None, bit0(0x0019e93d), maps["Bato Lab"], None),
 	(625511, 714752, "New Development", "Rebuild the first building in Mado",
 		3, None, bit4(0x0019e950), maps["Mado"], None),
 	(625512, 714753, "Bustling Suburb", "Rebuild the second building in Mado",
@@ -342,7 +343,9 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 ]
 for ach_id, badge, title, desc, points, type, addr, map_id, flags in ach_flags:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=type)
-	ach.add_core(SAVE_PROTECTION)
+	ach.add_core([
+		IN_OVERWORLD,
+		SAVE_PROTECTION])
 	if map_id is not None:
 		ach.add_core(add_maps(map_id))
 	ach.add_core([delta(addr) == value(0), addr == value(1)])
@@ -356,6 +359,7 @@ ach_cannon = Achievement(id=626131, badge=714712, title="Cannon Connoisseur",
 	description='Complete both the "Vintage Cannon" and "The Desert Tank Freak" quests',
 	points=4, type=AchievementType.MISSABLE)
 ach_cannon.add_core([
+	IN_OVERWORLD,
 	SAVE_PROTECTION,
 	bit2(0x0019e941) == value(1),
 	bit1(0x0019e942) == value(1)
@@ -374,6 +378,7 @@ ach_allie = Achievement(id=625644, badge=714617, title="Reunited Lovers",
 	description="Listen to Allie and Hunt discuss their future in Hatoba",
 	points=2, type=AchievementType.MISSABLE)
 ach_allie.add_core([
+	IN_OVERWORLD,
 	SAVE_PROTECTION,
 	mem.current_map == maps["Hatoba"],
 	bit1(0x0019e927) == value(1),
@@ -437,11 +442,11 @@ ach_bounties = [ # ID, Badge, Title, Description, Points, Type, Name, Map
 	(625317, 714722, "Ted and Gone", "Defeat Ted Broiler within Bias City, completing your quest for vengeance",
 		25, AchievementType.PROGRESSION, "Ted Broiler", maps["Bias City B3F"]),
 	(625318, 714726, "Apex Predator", "Defeat the U-U-Shark at the Water Bypass",
-		50, None, "U-U-Shark", maps["Water Bypass"]),
+		25, None, "U-U-Shark", maps["Water Bypass"]),
 	(625319, 714727, "Brand New Daedalus", "Defeat the EX-Daedalus in the desert west of Deathcruz",
-		50, None, "EX-Daedalus", maps["Overworld"]),
+		25, None, "EX-Daedalus", maps["Overworld"]),
 	(625320, 714728, "Angry Mama", "Defeat the Mothershipsaurus and its gaggle of Battleshipsauri in Rain Valley",
-		50, None, "Mothershipsaurus", maps["Rain Valley"])
+		25, None, "Mothershipsaurus", maps["Rain Valley"])
 ]
 for ach_id, badge, title, desc, points, ach_type, bounty_name, map_id in ach_bounties:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=ach_type)
@@ -460,6 +465,7 @@ for ach_id, badge, title, desc, points, ach_type, bounty_name, map_id in ach_bou
 ach_pichipichi = Achievement(id=625378, badge=714718, title="Pichi Pichi in the Ground", points=10, type=None,
 	description="Defeat the Pichi Pichi Brothers once and for all and return the stolen goods to Old Wolf in Hatoba")
 ach_pichipichi.add_core([
+	IN_OVERWORLD,
 	SAVE_PROTECTION,
 	mem.bounties["Pichi Pichi Bros"] == value(1),
 	bit3(0x0019e955) == value(1)
@@ -489,7 +495,7 @@ for ach_id, badge, title, desc, points, hunts_req in ach_hunts:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 
 	# Only two maps where you can hand in Challenge Hunts
-	logic = [ MEASURED_PROTECTION,
+	logic = [ IN_OVERWORLD, MEASURED_PROTECTION,
 		(mem.current_map == maps["Hatoba Hunt Office"]) | (mem.current_map == maps["Villain Museum"])
 	]
 
@@ -552,6 +558,7 @@ ach_chars_human = [ # ID, Badge, Title, Description, Points, Character, Maps
 for ach_id, badge, title, desc, points, char, map_id in ach_chars_human:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 	ach.add_core([
+		IN_OVERWORLD,
 		SAVE_PROTECTION,
 		add_maps(map_id),
 		delta(mem.chars[char].available) == value(0),
@@ -573,6 +580,7 @@ ach_chars_animal = [  # ID, Badge, Title, Description, Points, Character, Maps
 for ach_id, badge, title, desc, points, char, map_id in ach_chars_animal:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 	ach.add_core([
+		IN_OVERWORLD,
 		SAVE_PROTECTION,
 		add_maps(map_id)
 	])
@@ -707,8 +715,8 @@ challenge_ushark.add_alt([
 ach_set.add_achievement(challenge_ushark)
 
 challenge_cagliostro = Achievement(id=625350, badge=714690, title="Trap Sprung",
-	description="Defeat Cagliostro's second encounter without having a party member inside a vehicle",
-	points=10, type=AchievementType.MISSABLE)
+	description="Defeat Cagliostro's second encounter without ever having a party member inside a vehicle",
+	points=25, type=AchievementType.MISSABLE)
 challenge_cagliostro.add_core([
 	mem.current_map == maps["Dark Canal 2F"],
 	IN_COMBAT,
@@ -723,7 +731,7 @@ ach_set.add_achievement(challenge_cagliostro)
 
 challenge_bullfrog = Achievement(id=625351, badge=714701, title="Careful Dissection",
 	description="Defeat Bullfrog without inflicting status effects on him or the Bull Crusher",
-	points=10, type=AchievementType.MISSABLE)
+	points=25, type=AchievementType.MISSABLE)
 challenge_bullfrog.add_core([
 	(mem.game_state == value(1)).with_hits(1),
 	IN_COMBAT,
@@ -858,9 +866,9 @@ ach_vehicles = [ # ID, Badge, Title, Description, Points, Vehicle Index, Map, Ex
 for ach_id, badge, title, desc, points, vehicle_index, map_id, flags in ach_vehicles:
 	ach = Achievement(id=ach_id, badge=badge, title=title, description=desc, points=points, type=None)
 	ach.add_core([
+		mem.game_state == value(2),
 		SAVE_PROTECTION,
 		mem.current_map == map_id,
-		mem.game_state == value(2),
 		mem.naming_char == value(0),
 		delta(mem.naming_type) == value(0),
 		mem.naming_type == value(1),
@@ -885,7 +893,7 @@ ach_worldmaps = [ # ID, Badge, Title, Description, Points, Threshold
 ]
 for ach_id, badge, title, desc, points, threshold in ach_worldmaps:
 	ach = Achievement(id=ach_id, badge=badge, title=f"Wasteland {title}", description=desc, points=points)
-	ach.add_core(SAVE_PROTECTION)
+	ach.add_core([IN_OVERWORLD, SAVE_PROTECTION])
 
 	if threshold == 560:
 		ach.add_core([
@@ -1002,6 +1010,7 @@ ach_igoggles = Achievement(id=625367, badge=714597, title="From the Ashes",
 	description="Receive Maria's iGoggles, beginning your path of vengeance",
 	points=1, type=AchievementType.PROGRESSION)
 ach_igoggles.add_core([
+	IN_OVERWORLD,
 	SAVE_PROTECTION,
 	mem.current_map == maps["Mado Garage"],
 	delta(mem.inventory["Tools"][0]["ID"]) == 0,
@@ -1015,6 +1024,7 @@ ach_pocketmoney = Achievement(id=625368, badge=714607, title="Don't Spend It All
 	description="Receive a reward from Karu for gifting him pocket money",
 	points=1, type=None)
 ach_pocketmoney.add_core([
+	IN_OVERWORLD,
 	SAVE_PROTECTION,
 	mem.current_map == maps["Mado Garage"],
 	mem.movable == value(1)
@@ -1027,6 +1037,7 @@ ach_dogs = Achievement(id=625369, badge=714615, title="Free to a Good Home",
 	description="Bring all of the dogs from Dog Village to the old man in the greenhouse in Mado",
 	points=2, type=AchievementType.MISSABLE)
 ach_dogs.add_core([
+	IN_OVERWORLD,
 	MEASURED_PROTECTION,
 	mem.current_map == maps["Mado Greenhouse"],
 	add_source(delta(bit4(0x19e9c2))), add_source(delta(bit2(0x19e9c2))),
@@ -1036,8 +1047,8 @@ ach_dogs.add_core([
 	add_source(bit4(0x19e9c2) / bit3(0x19e9c2)), add_source(bit2(0x19e9c2) / bit1(0x19e9c2)),
 	add_source(bit0(0x19e9c2) / bit7(0x19e9c3)), add_source(bit6(0x19e9c3) / bit5(0x19e9c3)),
 	add_source(bit4(0x19e9c3) / bit3(0x19e9c3)), add_source(bit2(0x19e9c3) / bit1(0x19e9c3)),
-	add_source(bit0(0x19e9c3) / bit7(0x19e9c4)), remember(bit6(0x19e9c4) / bit5(0x19e9c4)),
-	measured(recall() == value(8))
+	add_source(bit0(0x19e9c3) / bit7(0x19e9c4)), add_source(bit6(0x19e9c4) / bit5(0x19e9c4)),
+	measured(value(0) == value(8))
 ])
 ach_set.add_achievement(ach_dogs)
 
@@ -1045,6 +1056,7 @@ ach_modders = Achievement(id=625523, badge=714760, title="Pit Crew",
 	description="Send every vehicle specialist to Nile's Garage in Mado",
 	points=5, type=None)
 ach_modders.add_core([
+	IN_OVERWORLD,
 	MEASURED_PROTECTION,
 	partial_bitcount(0x0019e9d7, range(0, 3), is_delta=True),
 	partial_bitcount(0x0019e9d8, range(5, 8), is_delta=True, count=5),
@@ -1085,6 +1097,7 @@ ach_noguchi = Achievement(id=625525, badge=714767, title="Not a Placebo",
 	description="Take a sample from the production line at Noguchi Chemicals",
 	points=2, type=None)
 ach_noguchi.add_core([
+	IN_OVERWORLD,
 	SAVE_PROTECTION,
 	mem.current_map == maps["Noguchi B1F"],
 	bit5(0x0019e9e0) == value(1),
@@ -1096,6 +1109,7 @@ ach_set.add_achievement(ach_noguchi)
 ach_lovemachine = Achievement(id=625860, badge=714765, title="Peace, LOVE, Unity, Respect",
 	description="Register all ICs into the LOVE Machine", points=10, type=None)
 ach_lovemachine.add_core([
+	IN_OVERWORLD,
 	MEASURED_PROTECTION,
 	mem.current_map == maps["Love Piece 2F"],
 	bit4(0x0019e75e) == value(1),
@@ -1110,6 +1124,7 @@ ach_metaldetector = Achievement(id=625551, badge=714769, title="All That Glitter
 	description='Reveal 100 items using a Metal Detector, earning the title of "Detector Ironman"',
 	points=5, type=None)
 ach_metaldetector.add_core([
+	IN_OVERWORLD,
 	measured_if(SAVE_PROTECTION),
 	delta(bit3(0x0019e75e)) == value(0),
 	bit3(0x0019e75e) == value(1),
@@ -1123,6 +1138,7 @@ ach_shellcraft = Achievement(id=625552, badge=714770, title="World of Shellcraft
 	description='Craft 100 shells using the Artist ability Craft Shell, earning the title of "Artistic Demon"',
 	points=10)
 ach_shellcraft.add_core([
+	IN_OVERWORLD,
 	measured_if(SAVE_PROTECTION),
 	delta(bit1(0x0019e75e)) == value(0),
 	bit1(0x0019e75e) == value(1),
@@ -1151,6 +1167,7 @@ ach_furniture = Achievement(id=626090, badge=714772, title="Extreme Makeover: Wa
 	points=4, type=None)
 ach_furniture.add_core([
 	#pause_if(~SAVE_PROTECTION),
+	IN_OVERWORLD,
 	measured_if(SAVE_PROTECTION),
 	delta(bit5(0x0019e75e)) == value(0),
 	bit5(0x0019e75e) == value(1),
@@ -1166,6 +1183,7 @@ ach_stamps = Achievement(id=626117, badge=714768, title="Stamped Out",
 	description="Receive a total of 10,000 stamps by selling items to the Mado Stamp Shop, earning the W-Tornado Cannon",
 	points=5, type=None)
 ach_stamps.add_core([
+	IN_OVERWORLD,
 	SAVE_PROTECTION,
 	mem.current_map == maps["Mado Garage"],
 	mem.movable == value(1),
