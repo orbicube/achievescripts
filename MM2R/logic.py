@@ -215,7 +215,7 @@ ach_flags = [ # ID, Badge, Title, Description, Points, Type, Flag Address, Map I
 	(625249, 714625, "No Place Like Home", "Show Sally of Bazaarska the wider world, then return her home",
 		2, None, bit5(0x0019e948), maps["Bazaarska"], None),
 	(625250, 714628, "The Power of Music", "Unlock the ability to assign subclasses by using a strange man's Potential Headphones",
-		2, None, bit5(0x0019e81d), maps["Bar Thirsty 2F"], None),
+		2, None, bit5(0x0019e81d), None, [(bit1(0x0019ea37), True)]),
 	(625251, 714627, "Arming the Resistance", "Perform some light weapons trafficking for Richie in the Mindless hideout",
 		3, None, bit5(0x0019e954), maps["El Nino Teleporter"], None),
 	(625252, 714629, "Squirrelly Shark", "Hunt the Iron Shark for the traders near Bar Thirsty",
@@ -836,7 +836,7 @@ challenge_kills.add_core([
 	reset_if(mem.game_state != value(2)),
 	add_source(mem.kills - delta(mem.kills)),
 	add_hits(mem.kills > delta(mem.kills)),
-	measured(always_false()).with_hits(30)
+	always_false().with_hits(30)
 ])
 ach_set.add_achievement(challenge_kills)
 
@@ -1012,12 +1012,15 @@ ach_igoggles = Achievement(id=625367, badge=714597, title="From the Ashes",
 ach_igoggles.add_core([
 	IN_OVERWORLD,
 	SAVE_PROTECTION,
-	mem.current_map == maps["Mado Garage"],
-	delta(mem.inventory["Tools"][0]["ID"]) == 0,
-	mem.inventory["Tools"][0]["ID"] == 0x05b,
-	delta(mem.inventory["Tools"][0]["Amount"]) == 0,
-	mem.inventory["Tools"][0]["Amount"] == 1
+	mem.current_map == maps["Mado Garage"]
 ])
+for i in range(0, 3):
+	ach_igoggles.add_alt([
+		delta(mem.inventory["Tools"][i]["ID"]) == 0,
+		mem.inventory["Tools"][i]["ID"] == 0x05b,
+		delta(mem.inventory["Tools"][i]["Amount"]) == 0,
+		mem.inventory["Tools"][i]["Amount"] == 1
+	])
 ach_set.add_achievement(ach_igoggles)
 
 ach_pocketmoney = Achievement(id=625368, badge=714607, title="Don't Spend It All at Once",

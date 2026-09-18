@@ -106,8 +106,8 @@ def party_info(party_size):
 
 	return ", ".join(chars)
 
-rp.add_display([mem.current_map >= 0xfffe], "On the Title Screen")
-
+rp.add_display([mem.current_map == 0xffff], "On the Title Screen")
+rp.add_display([mem.current_map == 0xfffe], "Loading...")
 
 rp.add_display([mem.game_state == 4, mem.current_map == 0xbc], "Watching the sunset after destroying the Bias Grapplers")
 rp.add_display([mem.game_state == 4], "Watching the sunset after marrying their true love")
